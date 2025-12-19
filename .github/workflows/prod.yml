@@ -1,0 +1,63 @@
+name: TaskFlow Production
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  app-production:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, bcmath, xml, ctype, json
+
+      - name: Install dependencies
+        run: composer install --no-dev --optimize-autoloader
+
+      - name: Copy .env
+        run: cp .env.example .env
+
+      - name: Generate app key
+        run: php artisan key:generate
+
+      - name: Run migrations
+        run: php artisan migrate --force
+
+      - name: Clear & Cache Config
+        run: |
+          php artisan config:cache
+          php artisan route:cache
+          php artisan view:cache
+
+      - name: Deploy to Production
+        run: echo "Deploying to Staging Server (no server for now)..."
+        # uses: appleboy/ssh-action@v0.1.6
+        # with:
+        #   host: ${{ secrets.PROD_HOST }}
+        #   username: ${{ secrets.PROD_USER }}
+        #   key: ${{ secrets.PROD_SSH_KEY }}
+        #   port: 22
+        #   script: |
+        #     cd /var/www/production-app
+        #     git pull origin production
+        #     composer install --no-dev --optimize-autoloader
+        #     php artisan migrate --force
+        #     php artisan config:cache
+        #     php artisan route:cache
+
+      - name: Clear & Cache Config
+        run: |
+          php artisan config:cache
+          php artisan route:cache
+          php artisan view:cache
+      
+      - name: Notify Deployment
+        run: echo "Pre-production deployment completed successfully."

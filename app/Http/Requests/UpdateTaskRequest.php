@@ -26,6 +26,7 @@ class UpdateTaskRequest extends FormRequest
             'start_date' => ['sometimes', 'nullable', 'date'],
             'due_date' => ['sometimes', 'nullable', 'date', 'after_or_equal:start_date'],
             'estimate_minutes' => ['sometimes', 'nullable', 'integer', 'min:1'],
+            'estimated_hours' => ['sometimes', 'nullable', 'numeric', 'min:0'],
             'actual_minutes' => ['sometimes', 'nullable', 'integer', 'min:1'],
             'archived_at' => ['sometimes', 'nullable', 'date'],
             'completed_at' => ['sometimes', 'nullable', 'date'],

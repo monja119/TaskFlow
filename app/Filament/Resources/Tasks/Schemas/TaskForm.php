@@ -45,7 +45,7 @@ class TaskForm
                     ->label('Statut')
                     ->options(TaskStatus::labels())
                     ->required()
-                    ->default('pending'),
+                    ->default(TaskStatus::TODO->value),
 
                 DatePicker::make('start_date')
                     ->label('Date de début')

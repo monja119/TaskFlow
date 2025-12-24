@@ -30,11 +30,11 @@ class ProjectPolicy
 
     public function update(User $user, Project $project): bool
     {
-        return $user->isManager() || $project->user_id === $user->id;
+        return $user->isManager();
     }
 
     public function delete(User $user, Project $project): bool
     {
-        return $user->isManager() || $project->user_id === $user->id;
+        return $user->isManager();
     }
 }

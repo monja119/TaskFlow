@@ -8,12 +8,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class Project extends Model
 {
     /** @use HasFactory<\Database\Factories\ProjectFactory> */
     use HasFactory;
     use SoftDeletes;
+    use LogsActivity;
     
     /**
      * The attributes that are mass assignable.
@@ -55,7 +58,7 @@ class Project extends Model
 
     public function scopeActive($query)
     {
-        return $query->whereNull('archived_at')->where('status', '!=', ProjectStatus::Completed);
+        return $query->whereNull('archived_at')->where('status', '!=', ProjectStatus::COMPLETED);
     }
 
     public function scopeAtRisk($query)
@@ -66,5 +69,13 @@ class Project extends Model
                     $inner->whereNotNull('end_date')->whereDate('end_date', '<', now());
                 });
         });
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['name', 'description', 'status', 'progress', 'risk_score', 'start_date', 'end_date', 'user_id'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
     }
 }

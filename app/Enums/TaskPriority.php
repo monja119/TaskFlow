@@ -4,16 +4,16 @@ namespace App\Enums;
 
 enum TaskPriority: string
 {
-    case Low = 'low';
-    case Medium = 'medium';
-    case High = 'high';
+    case LOW = 'low';
+    case MEDIUM = 'medium';
+    case HIGH = 'high';
 
     public static function labels(): array
     {
         return [
-            self::Low->value => 'Basse',
-            self::Medium->value => 'Moyenne',
-            self::High->value => 'Haute',
+            self::LOW->value => 'Basse',
+            self::MEDIUM->value => 'Moyenne',
+            self::HIGH->value => 'Haute',
         ];
     }
 }

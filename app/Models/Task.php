@@ -8,12 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class Task extends Model
 {
     /** @use HasFactory<\Database\Factories\TaskFactory> */
     use HasFactory;
     use SoftDeletes;
+    use LogsActivity;
     /**
      * The attributes that are mass assignable.
      *
@@ -65,5 +68,13 @@ class Task extends Model
     public function scopeActive($query)
     {
         return $query->whereNull('archived_at');
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['title', 'description', 'status', 'priority', 'start_date', 'due_date', 'estimate_minutes', 'actual_minutes', 'project_id', 'user_id'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
     }
 }

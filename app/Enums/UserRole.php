@@ -4,16 +4,16 @@ namespace App\Enums;
 
 enum UserRole: string
 {
-    case Admin = 'admin';
-    case Manager = 'manager';
-    case Member = 'member';
+    case ADMIN = 'admin';
+    case MANAGER = 'manager';
+    case MEMBER = 'member';
 
     public static function labels(): array
     {
         return [
-            self::Admin->value => 'Admin',
-            self::Manager->value => 'Manager',
-            self::Member->value => 'Membre',
+            self::ADMIN->value => 'Admin',
+            self::MANAGER->value => 'Manager',
+            self::MEMBER->value => 'Membre',
         ];
     }
 }

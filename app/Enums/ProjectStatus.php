@@ -4,18 +4,18 @@ namespace App\Enums;
 
 enum ProjectStatus: string
 {
-    case Pending = 'pending';
-    case InProgress = 'in_progress';
-    case Completed = 'completed';
-    case Blocked = 'blocked';
+    case PENDING = 'pending';
+    case IN_PROGRESS = 'in_progress';
+    case COMPLETED = 'completed';
+    case BLOCKED = 'blocked';
 
     public static function labels(): array
     {
         return [
-            self::Pending->value => 'En attente',
-            self::InProgress->value => 'En cours',
-            self::Completed->value => 'Terminé',
-            self::Blocked->value => 'Bloqué',
+            self::PENDING->value => 'En attente',
+            self::IN_PROGRESS->value => 'En cours',
+            self::COMPLETED->value => 'Terminé',
+            self::BLOCKED->value => 'Bloqué',
         ];
     }
 }

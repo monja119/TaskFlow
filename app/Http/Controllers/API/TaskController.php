@@ -39,7 +39,16 @@ class TaskController extends Controller
 
     public function store(StoreTaskRequest $request)
     {
-        $task = Task::create($request->validated());
+        $data = $request->validated();
+
+        $data['user_id'] = $data['user_id'] ?? $request->user()->id;
+
+        if (isset($data['estimated_hours'])) {
+            $data['estimate_minutes'] = (int) round($data['estimated_hours'] * 60);
+            unset($data['estimated_hours']);
+        }
+
+        $task = Task::create($data);
 
         return (new TaskResource($task->load(['project', 'user'])))
             ->response()
@@ -53,7 +62,14 @@ class TaskController extends Controller
 
     public function update(UpdateTaskRequest $request, Task $task)
     {
-        $task->update($request->validated());
+        $data = $request->validated();
+
+        if (isset($data['estimated_hours'])) {
+            $data['estimate_minutes'] = (int) round($data['estimated_hours'] * 60);
+            unset($data['estimated_hours']);
+        }
+
+        $task->update($data);
 
         return new TaskResource($task->fresh()->load(['project', 'user']));
     }

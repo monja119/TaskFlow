@@ -6,8 +6,12 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use App\Enums\TaskPriority;
+use App\Enums\TaskStatus;
 
 class TasksTable
 {
@@ -35,6 +39,10 @@ class TasksTable
                     ->label('Statut')
                     ->searchable(),
 
+                TextColumn::make('priority')
+                    ->label('Priorité')
+                    ->sortable(),
+
                 TextColumn::make('due_date')
                     ->label('Date d\'échéance')
                     ->date()
@@ -49,7 +57,13 @@ class TasksTable
                     ->sortable(),
             ])
             ->filters([
-                //
+                SelectFilter::make('status')
+                    ->options(TaskStatus::labels()),
+                SelectFilter::make('priority')
+                    ->options(TaskPriority::labels()),
+                Filter::make('overdue')
+                    ->label('En retard')
+                    ->query(fn ($query) => $query->overdue()),
             ])
             ->recordActions([
                 ViewAction::make(),

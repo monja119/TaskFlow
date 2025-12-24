@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Tasks\Schemas;
 
+use App\Enums\TaskPriority;
+use App\Enums\TaskStatus;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -35,27 +37,30 @@ class TaskForm
 
                 Select::make('priority')
                     ->label('Priorité')
-                    ->options([
-                        'low' => 'Basse',
-                        'medium' => 'Moyenne',
-                        'high' => 'Haute',
-                    ])
+                    ->options(TaskPriority::labels())
                     ->required()
                     ->default('medium'),
                 
                 Select::make('status')
                     ->label('Statut')
-                    ->options([
-                        'pending' => 'En attente',
-                        'in_progress' => 'En cours',
-                        'completed' => 'Terminé',
-                    ])
+                    ->options(TaskStatus::labels())
                     ->required()
                     ->default('pending'),
+
+                DatePicker::make('start_date')
+                    ->label('Date de début')
+                    ->displayFormat('d/m/Y')
+                    ->nullable(),
                 
                 DatePicker::make('due_date')
                     ->label('Date d\'échéance')
                     ->displayFormat('d/m/Y')
+                    ->nullable(),
+
+                TextInput::make('estimate_minutes')
+                    ->label('Estimation (minutes)')
+                    ->numeric()
+                    ->minValue(1)
                     ->nullable(),
 
             ]);

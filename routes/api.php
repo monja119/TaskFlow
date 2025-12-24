@@ -2,5 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\ProjectController;
+use App\Http\Controllers\API\TaskController;
 
-Route::apiResource('projects', ProjectController::class);
+Route::middleware('auth')->group(function () {
+	Route::apiResource('projects', ProjectController::class);
+	Route::apiResource('tasks', TaskController::class);
+});

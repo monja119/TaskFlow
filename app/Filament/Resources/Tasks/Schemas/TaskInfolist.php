@@ -21,8 +21,8 @@ class TaskInfolist
                     ->dateTime()
                     ->placeholder('-'),
                     
-                TextEntry::make('name')
-                    ->label('Nom du projet')
+                TextEntry::make('title')
+                    ->label('Titre de la tâche')
                     ->placeholder('-'),
 
                 TextEntry::make('description')
@@ -34,18 +34,21 @@ class TaskInfolist
                     ->label('Statut')
                     ->placeholder('-'),
 
+                TextEntry::make('priority')
+                    ->label('Priorité')
+                    ->placeholder('-'),
+
                 TextEntry::make('start_date')
                     ->label('Date de début')
                     ->date()
                     ->placeholder('-'),
 
-                TextEntry::make('end_date')
-                    ->label('Date de fin')
-                    ->date()
-                    ->placeholder('-'),
-
                 TextEntry::make('user.name')
                     ->label('Utilisateur')
+                    ->placeholder('-'),
+
+                TextEntry::make('project.name')
+                    ->label('Projet')
                     ->placeholder('-'),
             ]);
     }

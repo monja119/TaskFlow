@@ -34,6 +34,14 @@ class ProjectInfolist
                     ->label('Statut')
                     ->placeholder('-'),
 
+                TextEntry::make('progress')
+                    ->label('Progression (%)')
+                    ->placeholder('-'),
+
+                TextEntry::make('risk_score')
+                    ->label('Score de risque')
+                    ->placeholder('-'),
+
                 TextEntry::make('start_date')
                     ->label('Date de début')
                     ->date()

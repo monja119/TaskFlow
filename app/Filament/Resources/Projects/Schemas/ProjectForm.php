@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Projects\Schemas;
 
+use App\Enums\ProjectStatus;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -26,13 +27,24 @@ class ProjectForm
                 # select status
                 Select::make('status')
                     ->label('Statut')
-                    ->options([
-                        'pending' => 'En attente',
-                        'in_progress' => 'En cours',
-                        'completed' => 'Terminé',
-                    ])
+                    ->options(ProjectStatus::labels())
                     ->required()
                     ->default('pending'),
+
+                TextInput::make('progress')
+                    ->label('Progression (%)')
+                    ->numeric()
+                    ->minValue(0)
+                    ->maxValue(100)
+                    ->default(0),
+
+                TextInput::make('risk_score')
+                    ->label('Score de risque')
+                    ->numeric()
+                    ->step(0.1)
+                    ->minValue(0)
+                    ->maxValue(100)
+                    ->nullable(),
 
                 # user id to "Utilisateur"
                 Select::make('user_id')

@@ -6,8 +6,10 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use App\Enums\ProjectStatus;
 
 class ProjectsTable
 {
@@ -35,6 +37,15 @@ class ProjectsTable
                     ->label('Statut')
                     ->searchable(),
 
+                TextColumn::make('progress')
+                    ->label('Progression')
+                    ->suffix('%')
+                    ->sortable(),
+
+                TextColumn::make('risk_score')
+                    ->label('Risque')
+                    ->sortable(),
+
                 TextColumn::make('start_date')
                     ->label('Date de début')
                     ->date()
@@ -51,7 +62,8 @@ class ProjectsTable
                     
             ])
             ->filters([
-                //
+                SelectFilter::make('status')
+                    ->options(ProjectStatus::labels()),
             ])
             ->recordActions([
                 ViewAction::make(),

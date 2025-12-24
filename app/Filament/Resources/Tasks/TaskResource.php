@@ -21,7 +21,8 @@ class TaskResource extends Resource
 {
     protected static ?string $model = Task::class;
 
-        protected static UnitEnum|string|null $navigationGroup = 'Gestion des projets';
+    protected static UnitEnum|string|null $navigationGroup = 'Gestion des projets';
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     protected static ?string $recordTitleAttribute = 'Tâches';

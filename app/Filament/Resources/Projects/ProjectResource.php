@@ -28,7 +28,7 @@ class ProjectResource extends Resource
     protected static UnitEnum|string|null $navigationGroup = 'Gestion des projets';
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
-    protected static ?string $recordTitleAttribute = 'projects';
+    protected static ?string $recordTitleAttribute = 'name';
 
     public static function form(Schema $schema): Schema
     {

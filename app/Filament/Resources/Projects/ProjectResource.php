@@ -21,6 +21,8 @@ class ProjectResource extends Resource
 {
     protected static ?string $model = Project::class;
     
+    protected static bool $shouldRegisterNavigation = true;
+    
     protected static ?string $modelLabel = 'projet';
     protected static ?string $pluralModelLabel = 'projets';
 

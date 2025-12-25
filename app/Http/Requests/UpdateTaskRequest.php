@@ -6,6 +6,7 @@ use App\Enums\TaskPriority;
 use App\Enums\TaskStatus;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
+use Illuminate\Validation\Rule;
 
 class UpdateTaskRequest extends FormRequest
 {
@@ -25,11 +26,21 @@ class UpdateTaskRequest extends FormRequest
             'status' => ['sometimes', new Enum(TaskStatus::class)],
             'start_date' => ['sometimes', 'nullable', 'date'],
             'due_date' => ['sometimes', 'nullable', 'date', 'after_or_equal:start_date'],
-            'estimate_minutes' => ['sometimes', 'nullable', 'integer', 'min:1'],
-            'estimated_hours' => ['sometimes', 'nullable', 'numeric', 'min:0'],
+            'estimate_minutes' => [
+                'sometimes',
+                'nullable',
+                'integer',
+                'min:1',
+                Rule::prohibitedIf(fn () => $this->filled('estimated_hours')),
+            ],
+            'estimated_hours' => [
+                'sometimes',
+                'nullable',
+                'numeric',
+                'min:0',
+                Rule::prohibitedIf(fn () => $this->filled('estimate_minutes')),
+            ],
             'actual_minutes' => ['sometimes', 'nullable', 'integer', 'min:1'],
-            'archived_at' => ['sometimes', 'nullable', 'date'],
-            'completed_at' => ['sometimes', 'nullable', 'date'],
         ];
     }
 }

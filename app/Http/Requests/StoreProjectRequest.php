@@ -25,7 +25,6 @@ class StoreProjectRequest extends FormRequest
             'user_id' => ['required', 'exists:users,id'],
             'progress' => ['nullable', 'integer', 'min:0', 'max:100'],
             'risk_score' => ['nullable', 'numeric', 'min:0', 'max:100'],
-            'archived_at' => ['nullable', 'date'],
         ];
     }
 }

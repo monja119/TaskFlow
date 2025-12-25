@@ -85,7 +85,10 @@ class TaskApiTest extends TestCase
         $response->assertCreated()
             ->assertJsonFragment(['title' => 'New Task']);
 
-        $this->assertDatabaseHas('tasks', ['title' => 'New Task']);
+        $this->assertDatabaseHas('tasks', [
+            'title' => 'New Task',
+            'estimate_minutes' => 480,
+        ]);
     }
 
     #[Test]
@@ -102,7 +105,10 @@ class TaskApiTest extends TestCase
             ->postJson('/api/tasks', $data);
 
         $response->assertCreated();
-        $this->assertDatabaseHas('tasks', ['title' => 'Manager Task']);
+        $this->assertDatabaseHas('tasks', [
+            'title' => 'Manager Task',
+            'user_id' => $this->manager->id,
+        ]);
     }
 
     #[Test]
@@ -354,6 +360,79 @@ class TaskApiTest extends TestCase
 
         $response->assertUnprocessable()
             ->assertJsonValidationErrors(['estimated_hours']);
+    }
+
+    #[Test]
+    public function validates_conflicting_estimates_are_rejected()
+    {
+        $data = [
+            'title' => 'Test Task',
+            'status' => TaskStatus::TODO->value,
+            'priority' => TaskPriority::LOW->value,
+            'project_id' => $this->project->id,
+            'estimated_hours' => 2,
+            'estimate_minutes' => 120,
+        ];
+
+        $response = $this->actingAs($this->admin)
+            ->postJson('/api/tasks', $data);
+
+        $response->assertUnprocessable()
+            ->assertJsonValidationErrors(['estimated_hours', 'estimate_minutes']);
+    }
+
+    #[Test]
+    public function sets_completed_at_when_marking_completed()
+    {
+        $task = Task::factory()->create([
+            'project_id' => $this->project->id,
+            'status' => TaskStatus::IN_PROGRESS->value,
+            'completed_at' => null,
+        ]);
+
+        $response = $this->actingAs($this->admin)
+            ->putJson("/api/tasks/{$task->id}", [
+                'title' => $task->title,
+                'status' => TaskStatus::COMPLETED->value,
+                'priority' => $task->priority->value,
+                'project_id' => $task->project_id,
+            ]);
+
+        $response->assertOk();
+
+        $this->assertDatabaseMissing('tasks', ['id' => $task->id, 'completed_at' => null]);
+    }
+
+    #[Test]
+    public function clears_completed_at_when_reopening()
+    {
+        $task = Task::factory()->create([
+            'project_id' => $this->project->id,
+            'status' => TaskStatus::COMPLETED->value,
+            'completed_at' => now(),
+        ]);
+
+        $response = $this->actingAs($this->admin)
+            ->putJson("/api/tasks/{$task->id}", [
+                'title' => $task->title,
+                'status' => TaskStatus::TODO->value,
+                'priority' => $task->priority->value,
+                'project_id' => $task->project_id,
+            ]);
+
+        $response->assertOk();
+
+        $this->assertDatabaseHas('tasks', ['id' => $task->id, 'completed_at' => null]);
+    }
+
+    #[Test]
+    public function validates_per_page_upper_bound()
+    {
+        $response = $this->actingAs($this->admin)
+            ->getJson('/api/tasks?per_page=200');
+
+        $response->assertUnprocessable()
+            ->assertJsonValidationErrors(['per_page']);
     }
 
     #[Test]

@@ -5,50 +5,31 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
+use App\Http\Requests\TaskIndexRequest;
 use App\Http\Resources\TaskResource;
+use App\DataTransferObjects\TaskFilterData;
 use App\Models\Task;
+use App\Services\Task\TaskService;
 
 class TaskController extends Controller
 {
-    public function __construct()
+    public function __construct(private TaskService $tasks)
     {
         $this->authorizeResource(Task::class, 'task');
     }
 
-    public function index()
+    public function index(TaskIndexRequest $request)
     {
-        $user = request()->user();
+        $filters = TaskFilterData::fromRequest($request);
 
-        $tasks = Task::query()
-            ->with(['project', 'user'])
-            ->when($user && $user->isMember(), function ($query) use ($user) {
-                $query->where(function ($q) use ($user) {
-                    $q->where('user_id', $user->id)
-                        ->orWhereHas('project', fn ($sub) => $sub->where('user_id', $user->id));
-                });
-            })
-            ->when(request('status'), fn ($query, $status) => $query->where('status', $status))
-            ->when(request('priority'), fn ($query, $priority) => $query->where('priority', $priority))
-            ->when(request('project_id'), fn ($query, $projectId) => $query->where('project_id', $projectId))
-            ->when(request('user_id'), fn ($query, $userId) => $query->where('user_id', $userId))
-            ->when(request('search'), fn ($query, $search) => $query->where('title', 'like', "%{$search}%"))
-            ->paginate();
+        $tasks = $this->tasks->listForUser($filters, $request->user());
 
         return TaskResource::collection($tasks);
     }
 
     public function store(StoreTaskRequest $request)
     {
-        $data = $request->validated();
-
-        $data['user_id'] = $data['user_id'] ?? $request->user()->id;
-
-        if (isset($data['estimated_hours'])) {
-            $data['estimate_minutes'] = (int) round($data['estimated_hours'] * 60);
-            unset($data['estimated_hours']);
-        }
-
-        $task = Task::create($data);
+        $task = $this->tasks->create($request->validated(), $request->user()->id);
 
         return (new TaskResource($task->load(['project', 'user'])))
             ->response()
@@ -62,16 +43,9 @@ class TaskController extends Controller
 
     public function update(UpdateTaskRequest $request, Task $task)
     {
-        $data = $request->validated();
+        $updated = $this->tasks->update($task, $request->validated());
 
-        if (isset($data['estimated_hours'])) {
-            $data['estimate_minutes'] = (int) round($data['estimated_hours'] * 60);
-            unset($data['estimated_hours']);
-        }
-
-        $task->update($data);
-
-        return new TaskResource($task->fresh()->load(['project', 'user']));
+        return new TaskResource($updated);
     }
 
     public function destroy(Task $task)

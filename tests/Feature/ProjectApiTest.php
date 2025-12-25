@@ -291,6 +291,16 @@ class ProjectApiTest extends TestCase
     }
 
     #[Test]
+    public function validates_per_page_upper_bound()
+    {
+        $response = $this->actingAs($this->admin)
+            ->getJson('/api/projects?per_page=200');
+
+        $response->assertUnprocessable()
+            ->assertJsonValidationErrors(['per_page']);
+    }
+
+    #[Test]
     public function unauthenticated_user_cannot_access_projects()
     {
         $response = $this->getJson('/api/projects');

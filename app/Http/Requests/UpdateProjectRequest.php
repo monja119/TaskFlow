@@ -25,7 +25,6 @@ class UpdateProjectRequest extends FormRequest
             'user_id' => ['sometimes', 'exists:users,id'],
             'progress' => ['sometimes', 'integer', 'min:0', 'max:100'],
             'risk_score' => ['sometimes', 'nullable', 'numeric', 'min:0', 'max:100'],
-            'archived_at' => ['sometimes', 'nullable', 'date'],
         ];
     }
 }

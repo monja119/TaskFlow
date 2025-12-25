@@ -3,15 +3,17 @@
 namespace App\Http\Controllers\API;
 
 use App\Models\Project;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
+use App\Http\Requests\ProjectIndexRequest;
 use App\Http\Resources\ProjectResource;
+use App\DataTransferObjects\ProjectFilterData;
+use App\Services\Project\ProjectService;
 
 class ProjectController extends Controller
 {
-    public function __construct()
+    public function __construct(private ProjectService $projects)
     {
         $this->authorizeResource(Project::class, 'project');
     }
@@ -19,17 +21,11 @@ class ProjectController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(ProjectIndexRequest $request)
     {
-        $user = request()->user();
+        $filters = ProjectFilterData::fromRequest($request);
 
-        $projects = Project::query()
-            ->with('user')
-            ->withCount('tasks')
-            ->when($user && $user->isMember(), fn ($query) => $query->where('user_id', $user->id))
-            ->when(request('status'), fn ($query, $status) => $query->where('status', $status))
-            ->when(request('search'), fn ($query, $search) => $query->where('name', 'like', "%{$search}%"))
-            ->paginate();
+        $projects = $this->projects->listForUser($filters, $request->user());
 
         return ProjectResource::collection($projects);
     }
@@ -39,7 +35,7 @@ class ProjectController extends Controller
      */
     public function store(StoreProjectRequest $request)
     {
-        $project = Project::create($request->validated());
+        $project = $this->projects->create($request->validated());
 
         return (new ProjectResource($project->load('user')))
             ->response()
@@ -59,9 +55,9 @@ class ProjectController extends Controller
      */
     public function update(UpdateProjectRequest $request, Project $project)
     {
-        $project->update($request->validated());
+        $updated = $this->projects->update($project, $request->validated());
 
-        return new ProjectResource($project->fresh()->load('user'));
+        return new ProjectResource($updated);
     }
 
     /**

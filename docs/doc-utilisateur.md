@@ -1,6 +1,6 @@
 # TaskFlow — Documentation utilisateur
 
-> **Slogan** : Organisez. Priorisez. Avancez intelligemment.
+> Organisez. Priorisez. Avancez intelligemment.
 
 ---
 

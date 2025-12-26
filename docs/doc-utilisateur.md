@@ -665,4 +665,4 @@ Cette documentation couvre l'utilisation complète de TaskFlow pour tous les rô
 - **Issues GitHub** : [https://github.com/monja119/TaskFlow/issues](https://github.com/monja119/TaskFlow/issues)
 - **Support** : contacter l'administrateur système.
 
-**Bon travail avec TaskFlow !** 🚀
+**Bon travail avec TaskFlow !**

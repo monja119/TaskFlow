@@ -7,7 +7,6 @@ use App\Enums\ProjectStatus;
 /**
  * Service pour formater l'affichage du statut d'un projet
  * 
- * Respecte le Single Responsibility Principle (SRP) en centralisant
  * la logique de formatage du statut au même endroit.
  */
 class ProjectStatusFormatter

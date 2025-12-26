@@ -46,7 +46,9 @@ class ProjectForm
                 Select::make('users')
                     ->label('Utilisateurs assignés')
                     ->multiple()
-                    ->relationship('users', 'name')
+                    ->options(fn () => \App\Models\User::pluck('name', 'id'))
+                    ->preload()
+                    ->searchable()
                     ->helperText('Sélectionnez les utilisateurs à ajouter à ce projet'),   
 
                 # start and end date  format

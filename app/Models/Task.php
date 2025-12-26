@@ -7,6 +7,7 @@ use App\Enums\TaskStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
@@ -58,6 +59,11 @@ class Task extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class);
+    }
+
     public function scopeOverdue($query)
     {
         return $query->whereNull('completed_at')
@@ -73,7 +79,7 @@ class Task extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly(['title', 'description', 'status', 'priority', 'start_date', 'due_date', 'estimate_minutes', 'actual_minutes', 'project_id', 'user_id'])
+            ->logOnly(['title', 'description', 'status', 'priority', 'start_date', 'due_date', 'actual_minutes', 'project_id'])
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs();
     }

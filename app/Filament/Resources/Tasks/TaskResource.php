@@ -7,6 +7,7 @@ use App\Filament\Resources\Tasks\Pages\EditTask;
 use App\Filament\Resources\Tasks\Pages\ListTasks;
 use App\Filament\Resources\Tasks\Pages\ViewTask;
 use App\Filament\Resources\Tasks\Schemas\TaskForm;
+use App\Filament\Resources\Tasks\Schemas\TaskInfolist;
 use App\Filament\Resources\Tasks\Tables\TasksTable;
 use App\Models\Task;
 use BackedEnum;
@@ -38,6 +39,11 @@ class TaskResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return TaskForm::configure($schema);
+    }
+
+    public static function infolist(Schema $schema): Schema
+    {
+        return TaskInfolist::configure($schema);
     }
 
     public static function table(Table $table): Table

@@ -62,9 +62,9 @@ class User extends Authenticatable
         return $this->belongsToMany(Project::class);
     }
 
-    public function tasks(): HasMany
+    public function tasks(): BelongsToMany
     {
-        return $this->hasMany(Task::class);
+        return $this->belongsToMany(Task::class);
     }
 
     public function isAdmin(): bool

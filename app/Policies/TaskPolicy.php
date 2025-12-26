@@ -20,7 +20,8 @@ class TaskPolicy
     public function view(User $user, Task $task): bool
     {
         return $user->isManager()
-            || $task->user_id === $user->id
+            || $task->users()->where('user_id', $user->id)->exists()
+            || $task->project?->users()->where('user_id', $user->id)->exists()
             || $task->project?->user_id === $user->id;
     }
 
@@ -31,7 +32,10 @@ class TaskPolicy
 
     public function update(User $user, Task $task): bool
     {
-        return $this->view($user, $task);
+        return $task->user_id === $user->id
+            || $task->users()->where('user_id', $user->id)->exists()
+            || $task->project?->users()->where('user_id', $user->id)->exists()
+            || $task->project?->user_id === $user->id;
     }
 
     public function delete(User $user, Task $task): bool

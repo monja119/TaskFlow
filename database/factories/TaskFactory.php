@@ -30,7 +30,7 @@ class TaskFactory extends Factory
             'start_date' => fake()->optional()->dateTimeBetween('-1 week', '+1 week'),
             'due_date' => fake()->optional()->dateTimeBetween('now', '+3 weeks'),
             'completed_at' => null,
-            'estimate_minutes' => fake()->numberBetween(30, 240),
+            'estimate_minutes' => fake()->optional()->numberBetween(60, 480),
             'actual_minutes' => null,
         ];
     }

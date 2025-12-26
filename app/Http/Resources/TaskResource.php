@@ -24,6 +24,7 @@ class TaskResource extends JsonResource
             'actual_minutes' => $this->actual_minutes,
             'project' => new ProjectResource($this->whenLoaded('project')),
             'user' => new UserResource($this->whenLoaded('user')),
+            'users' => UserResource::collection($this->whenLoaded('users')),
             'created_at' => optional($this->created_at)?->toDateTimeString(),
             'updated_at' => optional($this->updated_at)?->toDateTimeString(),
         ];

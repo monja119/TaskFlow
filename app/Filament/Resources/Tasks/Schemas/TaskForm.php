@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Tasks\Schemas;
 
 use App\Enums\TaskPriority;
 use App\Enums\TaskStatus;
+use App\Models\User;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -37,17 +38,21 @@ class TaskForm
                     ->label('Projet')
                     ->relationship('project', 'name')
                     ->required()
+                    ->live()
+                    ->afterStateUpdated(function ($state, $set) {
+                        $set('users', []);
+                    })
                     ->validationMessages([
                         'required' => 'Le projet est obligatoire.',
                     ]),
                 
-                Select::make('user_id')
-                    ->label('Utilisateur')
-                    ->relationship('user', 'name')
-                    ->required()
-                    ->validationMessages([
-                        'required' => 'L\'utilisateur est obligatoire.',
-                    ]),
+                Select::make('users')
+                    ->label('Utilisateurs assignés')
+                    ->multiple()
+                    ->options(fn ($get) => self::getUsersForProject($get('project_id')))
+                    ->preload()
+                    ->searchable()
+                    ->helperText('Sélectionnez les utilisateurs assignés à cette tâche (uniquement les utilisateurs du projet)'),
 
                 Select::make('priority')
                     ->label('Priorité')
@@ -77,16 +82,22 @@ class TaskForm
                     ->displayFormat('d/m/Y')
                     ->nullable(),
 
-                TextInput::make('estimate_minutes')
-                    ->label('Estimation (minutes)')
-                    ->numeric()
-                    ->minValue(1)
-                    ->nullable()
-                    ->validationMessages([
-                        'numeric' => 'L\'estimation doit être un nombre.',
-                        'min' => 'L\'estimation doit être au moins 1 minute.',
-                    ]),
-
             ]);
     }
+
+    private static function getUsersForProject(?int $projectId): array
+    {
+        if (!$projectId) {
+            return [];
+        }
+
+        return User::query()
+            ->whereHas('assignedProjects', function ($query) use ($projectId) {
+                $query->where('projects.id', $projectId);
+            })
+            ->select('users.id', 'users.name')
+            ->pluck('name', 'id')
+            ->toArray();
+    }
 }
+

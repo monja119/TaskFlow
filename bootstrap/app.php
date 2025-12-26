@@ -19,9 +19,12 @@ return Application::configure(basePath: dirname(__DIR__))
         // Créer une instance du Handler
         $handler = new Handler();
         
-        // Render pour toutes les exceptions
+        // Render uniquement pour les erreurs 500
         $exceptions->render(function (\Throwable $e) use ($handler) {
-            return $handler->renderException($e);
+            $statusCode = $handler->getStatusCode($e);
+            if ($statusCode === 500) {
+                return $handler->renderException($e);
+            }
         });
         
     })->create();

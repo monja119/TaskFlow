@@ -35,7 +35,7 @@ class Handler
     /**
      * Obtenir le code de statut HTTP approprié d'une exception
      */
-    private function getStatusCode(Throwable $exception): int
+    public function getStatusCode(Throwable $exception): int
     {
         // Exceptions de base de données
         if ($exception instanceof \Illuminate\Database\QueryException) {

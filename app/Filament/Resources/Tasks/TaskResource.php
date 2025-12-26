@@ -23,6 +23,12 @@ class TaskResource extends Resource
 
     protected static bool $shouldRegisterNavigation = true;
 
+    protected static ?string $navigationLabel = 'Tâches';
+
+    protected static ?string $modelLabel = 'tâche';
+
+    protected static ?string $pluralModelLabel = 'tâches';
+
     protected static UnitEnum|string|null $navigationGroup = 'Gestion des projets';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;

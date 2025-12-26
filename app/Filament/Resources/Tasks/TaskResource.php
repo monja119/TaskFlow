@@ -7,6 +7,7 @@ use App\Filament\Resources\Tasks\Pages\EditTask;
 use App\Filament\Resources\Tasks\Pages\ListTasks;
 use App\Filament\Resources\Tasks\Pages\ViewTask;
 use App\Filament\Resources\Tasks\Schemas\TaskForm;
+use App\Filament\Resources\Tasks\Schemas\TaskInfolist;
 use App\Filament\Resources\Tasks\Tables\TasksTable;
 use App\Models\Task;
 use BackedEnum;
@@ -16,12 +17,20 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use UnitEnum;
 
-
 class TaskResource extends Resource
 {
     protected static ?string $model = Task::class;
 
-        protected static UnitEnum|string|null $navigationGroup = 'Gestion des projets';
+    protected static bool $shouldRegisterNavigation = true;
+
+    protected static ?string $navigationLabel = 'Tâches';
+
+    protected static ?string $modelLabel = 'tâche';
+
+    protected static ?string $pluralModelLabel = 'tâches';
+
+    protected static UnitEnum|string|null $navigationGroup = 'Gestion des projets';
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     protected static ?string $recordTitleAttribute = 'Tâches';
@@ -29,6 +38,11 @@ class TaskResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return TaskForm::configure($schema);
+    }
+
+    public static function infolist(Schema $schema): Schema
+    {
+        return TaskInfolist::configure($schema);
     }
 
     public static function table(Table $table): Table

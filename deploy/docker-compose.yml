@@ -1,0 +1,285 @@
+services:
+  # MySQL Database Service
+  db:
+    image: mysql:8.0
+    container_name: taskflow-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: "${DB_PASSWORD}"
+      MYSQL_DATABASE: "${DB_DATABASE}"
+      MYSQL_USER: "${DB_USERNAME}"
+      MYSQL_PASSWORD: "${DB_PASSWORD}"
+      MYSQL_ROOT_HOST: "%"
+    ports:
+      - "${DB_PORT:-3306}:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./mysql/my.cnf:/etc/mysql/conf.d/custom.cnf:ro
+    command: --default-authentication-plugin=caching_sha2_password
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "${DB_USERNAME}", "-p${DB_PASSWORD}"]
+      timeout: 20s
+      retries: 10
+      interval: 15s
+      start_period: 60s
+    networks:
+      - taskflow-network
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+        reservations:
+          memory: 256M
+          cpus: '0.25'
+
+  # Redis Cache Service
+  redis:
+    image: redis:7-alpine
+    container_name: taskflow-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass "${REDIS_PASSWORD:-redis_password}"
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      timeout: 10s
+      retries: 3
+      interval: 15s
+      start_period: 30s
+    networks:
+      - taskflow-network
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+          cpus: '0.25'
+        reservations:
+          memory: 64M
+          cpus: '0.1'
+
+  # Laravel Application Service
+  app:
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-monja119}/taskflow:latest
+    container_name: taskflow-app
+    restart: unless-stopped
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+      args:
+        APP_NAME: "${APP_NAME:-TaskFlow}"
+        APP_ENV: "${APP_ENV:-production}"
+        APP_DEBUG: "${APP_DEBUG:-false}"
+        APP_URL: "${APP_URL}"
+        APP_KEY: "${APP_KEY}"
+    environment:
+      # Application
+      APP_NAME: "${APP_NAME:-TaskFlow}"
+      APP_ENV: "${APP_ENV:-production}"
+      APP_DEBUG: "${APP_DEBUG:-false}"
+      APP_KEY: "${APP_KEY}"
+      APP_URL: "${APP_URL}"
+      APP_TIMEZONE: "${APP_TIMEZONE:-UTC}"
+      APP_LOCALE: "${APP_LOCALE:-en}"
+      
+      # Database Configuration
+      DB_CONNECTION: "${DB_CONNECTION:-mysql}"
+      DB_HOST: "${DB_HOST:-db}"
+      DB_PORT: "${DB_PORT:-3306}"
+      DB_DATABASE: "${DB_DATABASE}"
+      DB_USERNAME: "${DB_USERNAME}"
+      DB_PASSWORD: "${DB_PASSWORD}"
+      
+      # Cache Configuration
+      CACHE_DRIVER: "${CACHE_DRIVER:-redis}"
+      SESSION_DRIVER: "${SESSION_DRIVER:-redis}"
+      QUEUE_CONNECTION: "${QUEUE_CONNECTION:-redis}"
+      
+      # Redis Configuration
+      REDIS_HOST: "${REDIS_HOST:-redis}"
+      REDIS_PASSWORD: "${REDIS_PASSWORD:-redis_password}"
+      REDIS_PORT: "${REDIS_PORT:-6379}"
+      
+      # Mail Configuration
+      MAIL_MAILER: "${MAIL_MAILER:-smtp}"
+      MAIL_HOST: "${MAIL_HOST}"
+      MAIL_PORT: "${MAIL_PORT:-587}"
+      MAIL_USERNAME: "${MAIL_USERNAME}"
+      MAIL_PASSWORD: "${MAIL_PASSWORD}"
+      MAIL_ENCRYPTION: "${MAIL_ENCRYPTION:-tls}"
+      MAIL_FROM_ADDRESS: "${MAIL_FROM_ADDRESS}"
+      MAIL_FROM_NAME: "${MAIL_FROM_NAME:-TaskFlow}"
+      
+      # Filament Configuration
+      FILAMENT_FILESYSTEM_DRIVER: "${FILAMENT_FILESYSTEM_DRIVER:-public}"
+      
+      # Deployment Configuration
+      WAIT_FOR_DB: "${WAIT_FOR_DB:-true}"
+      RUN_MIGRATIONS: "${RUN_MIGRATIONS:-true}"
+      RUN_SEEDERS: "${RUN_SEEDERS:-false}"
+      QUEUE_WORKER: "${QUEUE_WORKER:-true}"
+      SCHEDULER: "${SCHEDULER:-true}"
+      
+      # Admin User Creation (first deployment only)
+      CREATE_ADMIN: "${CREATE_ADMIN:-false}"
+      ADMIN_NAME: "${ADMIN_NAME:-Admin}"
+      ADMIN_EMAIL: "${ADMIN_EMAIL}"
+      ADMIN_PASSWORD: "${ADMIN_PASSWORD}"
+      
+      # Logging
+      LOG_CHANNEL: "${LOG_CHANNEL:-stack}"
+      LOG_LEVEL: "${LOG_LEVEL:-info}"
+    ports:
+      - "${APP_PORT:-80}:80"
+    volumes:
+      - app_storage:/var/www/html/storage/app
+      - app_logs:/var/www/html/storage/logs
+      - ../public/uploads:/var/www/html/public/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost", "||", "exit", "1"]
+      timeout: 10s
+      retries: 3
+      interval: 30s
+      start_period: 60s
+    networks:
+      - taskflow-network
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '1.0'
+        reservations:
+          memory: 512M
+          cpus: '0.5'
+
+  # Nginx Reverse Proxy (Optional - for SSL termination)
+  nginx:
+    image: nginx:alpine
+    container_name: taskflow-nginx
+    restart: unless-stopped
+    ports:
+      - "${NGINX_HTTP_PORT:-80}:80"
+      - "${NGINX_HTTPS_PORT:-443}:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - ../public:/var/www/html/public:ro
+    depends_on:
+      - app
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
+      timeout: 5s
+      retries: 3
+      interval: 30s
+      start_period: 10s
+    networks:
+      - taskflow-network
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+          cpus: '0.25'
+        reservations:
+          memory: 64M
+          cpus: '0.1'
+    profiles:
+      - with-nginx
+
+  # Queue Worker Service 
+  queue:
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-monja119}/taskflow:latest
+    container_name: taskflow-queue
+    restart: unless-stopped
+    command: php artisan queue:work --verbose --tries=3 --timeout=90 --sleep=3
+    environment:
+      APP_NAME: "${APP_NAME:-TaskFlow}"
+      APP_ENV: "${APP_ENV:-production}"
+      APP_DEBUG: "false"
+      APP_KEY: "${APP_KEY}"
+      DB_CONNECTION: "${DB_CONNECTION:-mysql}"
+      DB_HOST: "${DB_HOST:-db}"
+      DB_PORT: "${DB_PORT:-3306}"
+      DB_DATABASE: "${DB_DATABASE}"
+      DB_USERNAME: "${DB_USERNAME}"
+      DB_PASSWORD: "${DB_PASSWORD}"
+      REDIS_HOST: "${REDIS_HOST:-redis}"
+      REDIS_PASSWORD: "${REDIS_PASSWORD:-redis_password}"
+      REDIS_PORT: "${REDIS_PORT:-6379}"
+      QUEUE_CONNECTION: "${QUEUE_CONNECTION:-redis}"
+    volumes:
+      - app_logs:/var/www/html/storage/logs
+    depends_on:
+      - app
+      - redis
+    networks:
+      - taskflow-network
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+        reservations:
+          memory: 256M
+          cpus: '0.25'
+    profiles:
+      - with-queue
+
+  # Scheduler Service (Cron jobs)
+  scheduler:
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-monja119}/taskflow:latest
+    container_name: taskflow-scheduler
+    restart: unless-stopped
+    command: sh -c 'while true; do php artisan schedule:run --verbose --no-interaction & sleep 60; done'
+    environment:
+      APP_NAME: "${APP_NAME:-TaskFlow}"
+      APP_ENV: "${APP_ENV:-production}"
+      APP_DEBUG: "false"
+      APP_KEY: "${APP_KEY}"
+      DB_CONNECTION: "${DB_CONNECTION:-mysql}"
+      DB_HOST: "${DB_HOST:-db}"
+      DB_PORT: "${DB_PORT:-3306}"
+      DB_DATABASE: "${DB_DATABASE}"
+      DB_USERNAME: "${DB_USERNAME}"
+      DB_PASSWORD: "${DB_PASSWORD}"
+    volumes:
+      - app_logs:/var/www/html/storage/logs
+    depends_on:
+      - app
+    networks:
+      - taskflow-network
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.25'
+        reservations:
+          memory: 128M
+          cpus: '0.1'
+    profiles:
+      - with-scheduler
+
+# Persistent volumes
+volumes:
+  db_data:
+    driver: local
+  redis_data:
+    driver: local
+  app_storage:
+    driver: local
+  app_logs:
+    driver: local
+
+# Network configuration
+networks:
+  taskflow-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16

@@ -11,11 +11,11 @@ class TaskDueSoonNotificationService implements NotificationServiceInterface
     /**
      * Send notification to users about tasks due soon
      *
-     * @param Task $subject
+     * @param  Task  $subject
      */
     public function send(Model $subject, array $context = []): void
     {
-        if (!$subject instanceof Task) {
+        if (! $subject instanceof Task) {
             throw new \InvalidArgumentException('Subject must be an instance of Task');
         }
 

@@ -23,7 +23,7 @@ class ListTasks extends ListRecords
         $query = parent::getTableQuery();
         $user = auth()->user();
 
-        if ($user && !$user->isAdmin() && !$user->isManager()) {
+        if ($user && ! $user->isAdmin() && ! $user->isManager()) {
             // Les membres ne voient que les tâches des projets auxquels ils sont assignés
             $query->whereHas('project', function (Builder $q) use ($user) {
                 $q->where('user_id', $user->id)

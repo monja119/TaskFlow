@@ -4,7 +4,6 @@ namespace App\Http\Requests;
 
 use App\Enums\ProjectStatus;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Enum;
 
 class UpdateProjectRequest extends FormRequest

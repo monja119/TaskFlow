@@ -12,12 +12,12 @@ class TaskAssignedNotificationService implements NotificationServiceInterface
     /**
      * Send notification to users assigned to a task
      *
-     * @param Task $subject
-     * @param array{newUsers: array<int, User>} $context
+     * @param  Task  $subject
+     * @param  array{newUsers: array<int, User>}  $context
      */
     public function send(Model $subject, array $context = []): void
     {
-        if (!$subject instanceof Task) {
+        if (! $subject instanceof Task) {
             throw new \InvalidArgumentException('Subject must be an instance of Task');
         }
 

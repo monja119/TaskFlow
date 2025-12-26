@@ -2,15 +2,15 @@
 
 namespace App\Filament\Resources\Projects\Tables;
 
+use App\Enums\ProjectStatus;
+use App\Services\ProjectStatusFormatter;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use App\Enums\ProjectStatus;
-use App\Services\ProjectStatusFormatter;
 
 class ProjectsTable
 {
@@ -57,7 +57,7 @@ class ProjectsTable
                     ->label('Date de fin')
                     ->date()
                     ->sortable(),
-                    
+
             ])
             ->filters([
                 SelectFilter::make('status')

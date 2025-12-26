@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HealthCheckController;
+use Illuminate\Support\Facades\Route;
 
 // Health Check Routes (for monitoring and Docker health checks)
 Route::get('/health', [HealthCheckController::class, 'basic'])->name('health.basic');

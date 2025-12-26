@@ -2,9 +2,9 @@
 
 namespace Tests\Feature\API;
 
-use Tests\TestCase;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class AuthenticationTest extends TestCase
 {
@@ -22,7 +22,7 @@ class AuthenticationTest extends TestCase
         $response->assertStatus(201)
             ->assertJsonStructure([
                 'token',
-                'user' => ['id', 'name', 'email']
+                'user' => ['id', 'name', 'email'],
             ]);
 
         $this->assertDatabaseHas('users', [
@@ -45,7 +45,7 @@ class AuthenticationTest extends TestCase
         $response->assertStatus(200)
             ->assertJsonStructure([
                 'token',
-                'user' => ['id', 'name', 'email']
+                'user' => ['id', 'name', 'email'],
             ]);
     }
 
@@ -79,7 +79,7 @@ class AuthenticationTest extends TestCase
                     'id' => $user->id,
                     'name' => $user->name,
                     'email' => $user->email,
-                ]
+                ],
             ]);
     }
 
@@ -93,7 +93,7 @@ class AuthenticationTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJson([
-                'message' => 'Token revoked successfully'
+                'message' => 'Token revoked successfully',
             ]);
 
         $this->assertCount(0, $user->fresh()->tokens);

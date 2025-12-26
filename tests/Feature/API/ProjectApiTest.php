@@ -2,16 +2,17 @@
 
 namespace Tests\Feature\API;
 
-use Tests\TestCase;
-use App\Models\User;
 use App\Models\Project;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class ProjectApiTest extends TestCase
 {
     use RefreshDatabase;
 
     protected User $user;
+
     protected string $token;
 
     protected function setUp(): void
@@ -49,7 +50,7 @@ class ProjectApiTest extends TestCase
 
         $response->assertStatus(201)
             ->assertJsonStructure([
-                'data' => ['id', 'name', 'description', 'status']
+                'data' => ['id', 'name', 'description', 'status'],
             ]);
 
         $this->assertDatabaseHas('projects', [
@@ -63,14 +64,14 @@ class ProjectApiTest extends TestCase
         $project = Project::factory()->create(['user_id' => $this->user->id]);
 
         $response = $this->withToken($this->token)
-            ->getJson('/api/projects/' . $project->id);
+            ->getJson('/api/projects/'.$project->id);
 
         $response->assertStatus(200)
             ->assertJson([
                 'data' => [
                     'id' => $project->id,
                     'name' => $project->name,
-                ]
+                ],
             ]);
     }
 
@@ -79,7 +80,7 @@ class ProjectApiTest extends TestCase
         $otherProject = Project::factory()->create();
 
         $response = $this->withToken($this->token)
-            ->getJson('/api/projects/' . $otherProject->id);
+            ->getJson('/api/projects/'.$otherProject->id);
 
         // Admin can view all projects
         $response->assertStatus(200);
@@ -90,7 +91,7 @@ class ProjectApiTest extends TestCase
         $project = Project::factory()->create(['user_id' => $this->user->id]);
 
         $response = $this->withToken($this->token)
-            ->putJson('/api/projects/' . $project->id, [
+            ->putJson('/api/projects/'.$project->id, [
                 'name' => 'Updated Project',
                 'description' => 'Updated Description',
                 'status' => 'in_progress',
@@ -100,7 +101,7 @@ class ProjectApiTest extends TestCase
             ->assertJson([
                 'data' => [
                     'name' => 'Updated Project',
-                ]
+                ],
             ]);
 
         $this->assertDatabaseHas('projects', [
@@ -114,7 +115,7 @@ class ProjectApiTest extends TestCase
         $project = Project::factory()->create(['user_id' => $this->user->id]);
 
         $response = $this->withToken($this->token)
-            ->deleteJson('/api/projects/' . $project->id);
+            ->deleteJson('/api/projects/'.$project->id);
 
         $response->assertStatus(204);
 

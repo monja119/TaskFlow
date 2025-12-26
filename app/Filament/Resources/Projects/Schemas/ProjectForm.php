@@ -5,8 +5,8 @@ namespace App\Filament\Resources\Projects\Schemas;
 use App\Enums\ProjectStatus;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
 class ProjectForm
@@ -23,7 +23,7 @@ class ProjectForm
                         'required' => 'Le nom du projet est obligatoire.',
                         'max' => 'Le nom du projet ne peut pas dépasser 255 caractères.',
                     ]),
-                    
+
                 Textarea::make('description')
                     ->label('Description')
                     ->rows(4)
@@ -31,8 +31,8 @@ class ProjectForm
                     ->validationMessages([
                         'required' => 'La description est obligatoire.',
                     ]),
-                    
-                # select status
+
+                // select status
                 Select::make('status')
                     ->label('Statut')
                     ->options(ProjectStatus::labels())
@@ -42,16 +42,16 @@ class ProjectForm
                         'required' => 'Le statut est obligatoire.',
                     ]),
 
-                # Utilisateurs assignés au projet
+                // Utilisateurs assignés au projet
                 Select::make('users')
                     ->label('Utilisateurs assignés')
                     ->multiple()
                     ->options(fn () => \App\Models\User::pluck('name', 'id'))
                     ->preload()
                     ->searchable()
-                    ->helperText('Sélectionnez les utilisateurs à ajouter à ce projet'),   
+                    ->helperText('Sélectionnez les utilisateurs à ajouter à ce projet'),
 
-                # start and end date  format
+                // start and end date  format
                 DatePicker::make('start_date')
                     ->label('Date de début')
                     ->displayFormat('d/m/Y')

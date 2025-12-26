@@ -20,7 +20,7 @@ class TaskAssignedNotificationServiceTest extends TestCase
         $task = Task::factory()->create();
         $users = User::factory()->count(2)->create();
 
-        $service = new TaskAssignedNotificationService();
+        $service = new TaskAssignedNotificationService;
         $service->send($task, ['newUsers' => $users->all()]);
 
         Notification::assertSentTo(
@@ -35,7 +35,7 @@ class TaskAssignedNotificationServiceTest extends TestCase
 
         $task = Task::factory()->create();
 
-        $service = new TaskAssignedNotificationService();
+        $service = new TaskAssignedNotificationService;
         $service->send($task, ['newUsers' => []]);
 
         Notification::assertNothingSent();

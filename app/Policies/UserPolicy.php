@@ -6,7 +6,7 @@ use App\Models\User;
 
 class UserPolicy
 {
-    public function before(User $user, string $ability): bool|null
+    public function before(User $user, string $ability): ?bool
     {
         // Seul l'administrateur peut gérer les utilisateurs
         return $user->isAdmin() ? true : null;
@@ -38,6 +38,7 @@ class UserPolicy
         if ($user->id === $model->id) {
             return false;
         }
+
         return false; // Géré par before()
     }
 

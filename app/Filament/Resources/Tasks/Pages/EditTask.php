@@ -9,13 +9,14 @@ use Filament\Resources\Pages\EditRecord;
 class EditTask extends EditRecord
 {
     protected static string $resource = TaskResource::class;
+
     private ?array $usersToSync = null;
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
         // Charger les IDs des utilisateurs existants
         $data['users'] = $this->record->users()->pluck('users.id')->toArray();
-        
+
         return $data;
     }
 
@@ -45,7 +46,7 @@ class EditTask extends EditRecord
         $this->record->users()->sync($this->usersToSync);
 
         // Envoyer les notifications uniquement aux nouveaux utilisateurs assignés
-        if (!empty($newUserIds)) {
+        if (! empty($newUserIds)) {
             $newUsers = \App\Models\User::whereIn('id', $newUserIds)->get();
             $notificationService = app(\App\Services\Notification\TaskAssignedNotificationService::class);
             $notificationService->send($this->record, ['newUsers' => $newUsers->all()]);

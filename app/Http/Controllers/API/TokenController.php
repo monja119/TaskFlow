@@ -24,7 +24,7 @@ class TokenController extends Controller
         });
 
         return response()->json([
-            'tokens' => $tokens
+            'tokens' => $tokens,
         ]);
     }
 
@@ -53,7 +53,7 @@ class TokenController extends Controller
                 'name' => $token->accessToken->name,
                 'abilities' => $token->accessToken->abilities,
                 'expires_at' => $token->accessToken->expires_at?->toDateTimeString(),
-            ]
+            ],
         ], 201);
     }
 
@@ -64,16 +64,16 @@ class TokenController extends Controller
     {
         $token = $request->user()->tokens()->where('id', $tokenId)->first();
 
-        if (!$token) {
+        if (! $token) {
             return response()->json([
-                'message' => 'Token not found'
+                'message' => 'Token not found',
             ], 404);
         }
 
         $token->delete();
 
         return response()->json([
-            'message' => 'Token revoked successfully'
+            'message' => 'Token revoked successfully',
         ]);
     }
 
@@ -83,13 +83,13 @@ class TokenController extends Controller
     public function destroyAll(Request $request)
     {
         $currentTokenId = $request->user()->currentAccessToken()->id;
-        
+
         $request->user()->tokens()
             ->where('id', '!=', $currentTokenId)
             ->delete();
 
         return response()->json([
-            'message' => 'All other tokens revoked successfully'
+            'message' => 'All other tokens revoked successfully',
         ]);
     }
 }

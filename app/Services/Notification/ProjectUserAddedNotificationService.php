@@ -13,12 +13,12 @@ class ProjectUserAddedNotificationService implements NotificationServiceInterfac
     /**
      * Send notification to users added to a project
      *
-     * @param Project $subject
-     * @param array{users: array<int, User>} $context
+     * @param  Project  $subject
+     * @param  array{users: array<int, User>}  $context
      */
     public function send(Model $subject, array $context = []): void
     {
-        if (!$subject instanceof Project) {
+        if (! $subject instanceof Project) {
             throw new \InvalidArgumentException('Subject must be an instance of Project');
         }
 
@@ -28,7 +28,7 @@ class ProjectUserAddedNotificationService implements NotificationServiceInterfac
             return;
         }
 
-        $projectUrl = URL::to('/admin/projects/' . $subject->id);
+        $projectUrl = URL::to('/admin/projects/'.$subject->id);
 
         foreach ($users as $user) {
             if ($user instanceof User) {

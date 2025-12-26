@@ -12,13 +12,13 @@ use Illuminate\Database\Eloquent\Builder;
 class UpcomingTasksWidget extends BaseWidget
 {
     protected static ?int $sort = 2;
-    
+
     protected static ?string $heading = 'Tâches à venir (7 prochains jours)';
 
     public function table(Table $table): Table
     {
         $user = auth()->user();
-        
+
         return $table
             ->query(
                 Task::query()
@@ -41,30 +41,30 @@ class UpcomingTasksWidget extends BaseWidget
                     ->sortable()
                     ->limit(40)
                     ->weight('bold'),
-                    
+
                 Tables\Columns\TextColumn::make('project.name')
                     ->label('Projet')
                     ->sortable()
                     ->limit(30)
                     ->badge()
                     ->color('info'),
-                    
+
                 Tables\Columns\TextColumn::make('priority')
                     ->label('Priorité')
                     ->badge()
                     ->sortable(),
-                    
+
                 Tables\Columns\TextColumn::make('status')
                     ->label('Statut')
                     ->badge()
                     ->sortable(),
-                    
+
                 Tables\Columns\TextColumn::make('due_date')
                     ->label('Échéance')
                     ->date('d/m/Y')
                     ->sortable()
                     ->color(fn (Task $record) => $record->due_date->isPast() ? 'danger' : 'success'),
-                    
+
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Assigné à')
                     ->sortable()

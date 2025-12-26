@@ -18,23 +18,23 @@ class ProjectsChartWidget extends ChartWidget
     protected function getData(): array
     {
         $user = auth()->user();
-        
+
         $statuses = [
             ProjectStatus::PENDING->value => 'En attente',
             ProjectStatus::IN_PROGRESS->value => 'En cours',
             ProjectStatus::COMPLETED->value => 'Terminé',
             ProjectStatus::BLOCKED->value => 'Bloqué',
         ];
-        
+
         $data = [];
         $labels = [];
-        
+
         foreach ($statuses as $value => $label) {
             $count = Project::query()
                 ->where('status', $value)
                 ->when($user && $user->isMember(), fn ($q) => $q->where('user_id', $user->id))
                 ->count();
-                
+
             $data[] = $count;
             $labels[] = $label;
         }
@@ -67,7 +67,7 @@ class ProjectsChartWidget extends ChartWidget
     {
         return 'doughnut';
     }
-    
+
     protected function getOptions(): array
     {
         return [

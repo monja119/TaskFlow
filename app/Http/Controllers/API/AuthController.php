@@ -23,14 +23,14 @@ class AuthController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
+        if (! $user || ! Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
         }
 
         $deviceName = $request->device_name ?? $request->userAgent() ?? 'unknown';
-        
+
         $token = $user->createToken($deviceName)->plainTextToken;
 
         return response()->json([
@@ -39,7 +39,7 @@ class AuthController extends Controller
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
-            ]
+            ],
         ]);
     }
 
@@ -62,7 +62,7 @@ class AuthController extends Controller
         ]);
 
         $deviceName = $request->device_name ?? $request->userAgent() ?? 'unknown';
-        
+
         $token = $user->createToken($deviceName)->plainTextToken;
 
         return response()->json([
@@ -71,7 +71,7 @@ class AuthController extends Controller
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
-            ]
+            ],
         ], 201);
     }
 
@@ -81,7 +81,7 @@ class AuthController extends Controller
     public function user(Request $request)
     {
         return response()->json([
-            'user' => $request->user()
+            'user' => $request->user(),
         ]);
     }
 
@@ -93,7 +93,7 @@ class AuthController extends Controller
         $request->user()->currentAccessToken()->delete();
 
         return response()->json([
-            'message' => 'Token revoked successfully'
+            'message' => 'Token revoked successfully',
         ]);
     }
 }

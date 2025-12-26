@@ -26,12 +26,12 @@ class UserInvitationNotification extends Notification implements ShouldQueue
     {
         $message = (new MailMessage)
             ->subject($this->getSubject())
-            ->greeting('Bonjour ' . ($notifiable->name ?? ''));
+            ->greeting('Bonjour '.($notifiable->name ?? ''));
 
         if ($this->project) {
-            $message->line('Vous avez été ajouté au projet "' . $this->project->name . '".')
-                ->line('**Description** : ' . ($this->project->description ?? 'Aucune description'))
-                ->line('**Statut** : ' . $this->project->status->getLabel());
+            $message->line('Vous avez été ajouté au projet "'.$this->project->name.'".')
+                ->line('**Description** : '.($this->project->description ?? 'Aucune description'))
+                ->line('**Statut** : '.$this->project->status->getLabel());
         } else {
             $message->line('Vous avez été invité à rejoindre la plateforme TaskFlow.');
         }
@@ -53,7 +53,7 @@ class UserInvitationNotification extends Notification implements ShouldQueue
     private function getSubject(): string
     {
         return $this->project
-            ? 'Vous avez été ajouté au projet : ' . $this->project->name
+            ? 'Vous avez été ajouté au projet : '.$this->project->name
             : 'Invitation à rejoindre la plateforme';
     }
 

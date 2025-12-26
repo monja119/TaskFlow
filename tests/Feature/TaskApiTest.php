@@ -17,8 +17,11 @@ class TaskApiTest extends TestCase
     use RefreshDatabase;
 
     protected User $admin;
+
     protected User $manager;
+
     protected User $member;
+
     protected Project $project;
 
     protected function setUp(): void
@@ -42,8 +45,8 @@ class TaskApiTest extends TestCase
         $response->assertOk()
             ->assertJsonStructure([
                 'data' => [
-                    '*' => ['id', 'title', 'status', 'priority', 'project', 'user']
-                ]
+                    '*' => ['id', 'title', 'status', 'priority', 'project', 'user'],
+                ],
             ])
             ->assertJsonCount(5, 'data');
     }
@@ -53,7 +56,7 @@ class TaskApiTest extends TestCase
     {
         Task::factory()->count(3)->create([
             'project_id' => $this->project->id,
-            'user_id' => $this->member->id
+            'user_id' => $this->member->id,
         ]);
         Task::factory()->count(2)->create(['project_id' => $this->project->id]);
 
@@ -132,7 +135,7 @@ class TaskApiTest extends TestCase
     {
         $task = Task::factory()->create([
             'project_id' => $this->project->id,
-            'title' => 'Old Title'
+            'title' => 'Old Title',
         ]);
 
         $response = $this->actingAs($this->admin)
@@ -154,7 +157,7 @@ class TaskApiTest extends TestCase
     {
         $task = Task::factory()->create([
             'project_id' => $this->project->id,
-            'user_id' => $this->member->id
+            'user_id' => $this->member->id,
         ]);
 
         $response = $this->actingAs($this->member)
@@ -168,7 +171,7 @@ class TaskApiTest extends TestCase
         $response->assertOk();
         $this->assertDatabaseHas('tasks', [
             'id' => $task->id,
-            'status' => TaskStatus::IN_PROGRESS->value
+            'status' => TaskStatus::IN_PROGRESS->value,
         ]);
     }
 
@@ -217,7 +220,7 @@ class TaskApiTest extends TestCase
     {
         $task = Task::factory()->create([
             'project_id' => $this->project->id,
-            'user_id' => $this->member->id
+            'user_id' => $this->member->id,
         ]);
 
         $response = $this->actingAs($this->member)
@@ -231,15 +234,15 @@ class TaskApiTest extends TestCase
     {
         Task::factory()->count(2)->create([
             'project_id' => $this->project->id,
-            'status' => TaskStatus::TODO
+            'status' => TaskStatus::TODO,
         ]);
         Task::factory()->count(3)->create([
             'project_id' => $this->project->id,
-            'status' => TaskStatus::IN_PROGRESS
+            'status' => TaskStatus::IN_PROGRESS,
         ]);
 
         $response = $this->actingAs($this->admin)
-            ->getJson('/api/tasks?status=' . TaskStatus::IN_PROGRESS->value);
+            ->getJson('/api/tasks?status='.TaskStatus::IN_PROGRESS->value);
 
         $response->assertOk()
             ->assertJsonCount(3, 'data');
@@ -250,15 +253,15 @@ class TaskApiTest extends TestCase
     {
         Task::factory()->count(2)->create([
             'project_id' => $this->project->id,
-            'priority' => TaskPriority::HIGH
+            'priority' => TaskPriority::HIGH,
         ]);
         Task::factory()->count(1)->create([
             'project_id' => $this->project->id,
-            'priority' => TaskPriority::LOW
+            'priority' => TaskPriority::LOW,
         ]);
 
         $response = $this->actingAs($this->admin)
-            ->getJson('/api/tasks?priority=' . TaskPriority::HIGH->value);
+            ->getJson('/api/tasks?priority='.TaskPriority::HIGH->value);
 
         $response->assertOk()
             ->assertJsonCount(2, 'data');
@@ -268,12 +271,12 @@ class TaskApiTest extends TestCase
     public function can_filter_tasks_by_project()
     {
         $anotherProject = Project::factory()->create();
-        
+
         Task::factory()->count(3)->create(['project_id' => $this->project->id]);
         Task::factory()->count(2)->create(['project_id' => $anotherProject->id]);
 
         $response = $this->actingAs($this->admin)
-            ->getJson('/api/tasks?project_id=' . $this->project->id);
+            ->getJson('/api/tasks?project_id='.$this->project->id);
 
         $response->assertOk()
             ->assertJsonCount(3, 'data');
@@ -284,12 +287,12 @@ class TaskApiTest extends TestCase
     {
         Task::factory()->count(2)->create([
             'project_id' => $this->project->id,
-            'user_id' => $this->member->id
+            'user_id' => $this->member->id,
         ]);
         Task::factory()->count(1)->create(['project_id' => $this->project->id]);
 
         $response = $this->actingAs($this->admin)
-            ->getJson('/api/tasks?user_id=' . $this->member->id);
+            ->getJson('/api/tasks?user_id='.$this->member->id);
 
         $response->assertOk()
             ->assertJsonCount(2, 'data');
@@ -300,11 +303,11 @@ class TaskApiTest extends TestCase
     {
         Task::factory()->create([
             'project_id' => $this->project->id,
-            'title' => 'Implement authentication'
+            'title' => 'Implement authentication',
         ]);
         Task::factory()->create([
             'project_id' => $this->project->id,
-            'title' => 'Design homepage'
+            'title' => 'Design homepage',
         ]);
 
         $response = $this->actingAs($this->admin)

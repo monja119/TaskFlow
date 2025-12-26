@@ -35,7 +35,7 @@ class SendProjectAtRiskNotificationsCommand extends Command
     public function handle(): int
     {
         $threshold = (int) $this->option('threshold');
-        
+
         $this->info("Looking for projects with risk score > {$threshold}...");
 
         $projects = Project::query()
@@ -46,6 +46,7 @@ class SendProjectAtRiskNotificationsCommand extends Command
 
         if ($projects->isEmpty()) {
             $this->info('No at-risk projects found.');
+
             return self::SUCCESS;
         }
 
@@ -53,7 +54,7 @@ class SendProjectAtRiskNotificationsCommand extends Command
         foreach ($projects as $project) {
             $this->projectAtRiskNotification->send($project);
             $count++;
-            
+
             $this->line("✓ Sent notification for project: {$project->name} (Risk: {$project->risk_score})");
         }
 

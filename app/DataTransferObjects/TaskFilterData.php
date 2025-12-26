@@ -15,8 +15,7 @@ class TaskFilterData
         public readonly ?int $userId,
         public readonly ?string $search,
         public readonly ?int $perPage,
-    ) {
-    }
+    ) {}
 
     public static function fromRequest(TaskIndexRequest $request): self
     {

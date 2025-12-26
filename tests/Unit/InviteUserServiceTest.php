@@ -16,7 +16,7 @@ class InviteUserServiceTest extends TestCase
 
         $user = User::factory()->make(['email' => 'invite@example.com']);
 
-        $service = new InviteUserService();
+        $service = new InviteUserService;
         $service->sendInvitation($user, 'https://example.com');
 
         Notification::assertSentTo($user, UserInvitationNotification::class, function ($notification, $channels) {

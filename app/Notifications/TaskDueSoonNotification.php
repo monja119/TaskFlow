@@ -24,13 +24,13 @@ class TaskDueSoonNotification extends Notification implements ShouldQueue
     public function toMail($notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Tâche à échéance proche : ' . $this->task->title)
-            ->greeting('Bonjour ' . $notifiable->name . ',')
-            ->line('La tâche "' . $this->task->title . '" arrive à échéance bientôt.')
-            ->line('**Date d\'échéance** : ' . $this->task->due_date->format('d/m/Y'))
-            ->line('**Priorité** : ' . $this->task->priority->getLabel())
-            ->line('**Projet** : ' . $this->task->project->name)
-            ->action('Voir la tâche', url('/admin/tasks/' . $this->task->id))
+            ->subject('Tâche à échéance proche : '.$this->task->title)
+            ->greeting('Bonjour '.$notifiable->name.',')
+            ->line('La tâche "'.$this->task->title.'" arrive à échéance bientôt.')
+            ->line('**Date d\'échéance** : '.$this->task->due_date->format('d/m/Y'))
+            ->line('**Priorité** : '.$this->task->priority->getLabel())
+            ->line('**Projet** : '.$this->task->project->name)
+            ->action('Voir la tâche', url('/admin/tasks/'.$this->task->id))
             ->line('Merci d\'utiliser TaskFlow !');
     }
 

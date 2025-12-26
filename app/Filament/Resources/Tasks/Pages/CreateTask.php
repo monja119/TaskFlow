@@ -8,6 +8,7 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateTask extends CreateRecord
 {
     protected static string $resource = TaskResource::class;
+
     private ?array $usersToAttach = null;
 
     protected function mutateFormDataBeforeCreate(array $data): array
@@ -22,9 +23,9 @@ class CreateTask extends CreateRecord
     protected function afterCreate(): void
     {
         // Attacher les utilisateurs à la tâche créée
-        if (!empty($this->usersToAttach)) {
+        if (! empty($this->usersToAttach)) {
             $this->record->users()->attach($this->usersToAttach);
-            
+
             // Envoyer les notifications
             $assignedUsers = \App\Models\User::whereIn('id', $this->usersToAttach)->get();
             $notificationService = app(\App\Services\Notification\TaskAssignedNotificationService::class);

@@ -2,8 +2,8 @@
 
 namespace App\Services\Task;
 
-use App\Enums\TaskStatus;
 use App\DataTransferObjects\TaskFilterData;
+use App\Enums\TaskStatus;
 use App\Models\Task;
 use App\Models\User;
 use App\Services\Notification\TaskAssignedNotificationService;
@@ -42,10 +42,10 @@ class TaskService
         unset($data['users']);
 
         $task = Task::create($data);
-        
-        if (!empty($users)) {
+
+        if (! empty($users)) {
             $task->users()->attach($users);
-            
+
             // Send notifications to assigned users
             $assignedUsers = User::whereIn('id', $users)->get();
             $this->taskAssignedNotification->send($task, ['newUsers' => $assignedUsers->all()]);
@@ -61,15 +61,15 @@ class TaskService
         unset($data['users']);
 
         $task->update($data);
-        
+
         if ($users !== null) {
             $existingUserIds = $task->users()->pluck('users.id')->toArray();
             $newUserIds = array_diff($users, $existingUserIds);
-            
+
             $task->users()->sync($users);
-            
+
             // Send notifications only to newly assigned users
-            if (!empty($newUserIds)) {
+            if (! empty($newUserIds)) {
                 $newUsers = User::whereIn('id', $newUserIds)->get();
                 $this->taskAssignedNotification->send($task, ['newUsers' => $newUsers->all()]);
             }
@@ -111,12 +111,12 @@ class TaskService
         $data = $validated;
 
         // Set user_id if not provided and we have a default
-        if (!isset($data['user_id']) && $defaultUserId) {
+        if (! isset($data['user_id']) && $defaultUserId) {
             $data['user_id'] = $defaultUserId;
         }
 
         // Convert estimated_hours to estimate_minutes if provided
-        if (isset($data['estimated_hours']) && !isset($data['estimate_minutes'])) {
+        if (isset($data['estimated_hours']) && ! isset($data['estimate_minutes'])) {
             $data['estimate_minutes'] = (int) ($data['estimated_hours'] * 60);
         }
 

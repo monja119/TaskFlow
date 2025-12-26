@@ -20,7 +20,7 @@ class ProjectUserAddedNotificationServiceTest extends TestCase
         $project = Project::factory()->create();
         $users = User::factory()->count(2)->create();
 
-        $service = new ProjectUserAddedNotificationService();
+        $service = new ProjectUserAddedNotificationService;
         $service->send($project, ['users' => $users->all()]);
 
         Notification::assertSentTo(
@@ -35,7 +35,7 @@ class ProjectUserAddedNotificationServiceTest extends TestCase
 
         $project = Project::factory()->create();
 
-        $service = new ProjectUserAddedNotificationService();
+        $service = new ProjectUserAddedNotificationService;
         $service->send($project, ['users' => []]);
 
         Notification::assertNothingSent();
@@ -46,7 +46,7 @@ class ProjectUserAddedNotificationServiceTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
 
         $user = User::factory()->create();
-        $service = new ProjectUserAddedNotificationService();
+        $service = new ProjectUserAddedNotificationService;
         $service->send($user, ['users' => []]);
     }
 }

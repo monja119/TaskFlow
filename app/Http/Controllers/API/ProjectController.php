@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Models\Project;
+use App\DataTransferObjects\ProjectFilterData;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ProjectIndexRequest;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
-use App\Http\Requests\ProjectIndexRequest;
 use App\Http\Resources\ProjectResource;
-use App\DataTransferObjects\ProjectFilterData;
+use App\Models\Project;
 use App\Services\Project\ProjectService;
 
 class ProjectController extends Controller

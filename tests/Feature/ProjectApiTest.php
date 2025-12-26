@@ -15,7 +15,9 @@ class ProjectApiTest extends TestCase
     use RefreshDatabase;
 
     protected User $admin;
+
     protected User $manager;
+
     protected User $member;
 
     protected function setUp(): void
@@ -38,10 +40,10 @@ class ProjectApiTest extends TestCase
         $response->assertOk()
             ->assertJsonStructure([
                 'data' => [
-                    '*' => ['id', 'name', 'status', 'progress', 'user', 'tasks_count']
+                    '*' => ['id', 'name', 'status', 'progress', 'user', 'tasks_count'],
                 ],
                 'links',
-                'meta'
+                'meta',
             ])
             ->assertJsonCount(5, 'data');
     }
@@ -207,7 +209,7 @@ class ProjectApiTest extends TestCase
         Project::factory()->count(3)->create(['status' => ProjectStatus::IN_PROGRESS]);
 
         $response = $this->actingAs($this->admin)
-            ->getJson('/api/projects?status=' . ProjectStatus::IN_PROGRESS->value);
+            ->getJson('/api/projects?status='.ProjectStatus::IN_PROGRESS->value);
 
         $response->assertOk()
             ->assertJsonCount(3, 'data');

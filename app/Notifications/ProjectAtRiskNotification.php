@@ -25,16 +25,16 @@ class ProjectAtRiskNotification extends Notification implements ShouldQueue
     {
         return (new MailMessage)
             ->error()
-            ->subject('⚠️ Projet à risque : ' . $this->project->name)
-            ->greeting('Bonjour ' . $notifiable->name . ',')
-            ->line('Le projet "' . $this->project->name . '" nécessite votre attention.')
-            ->line('**Score de risque** : ' . $this->project->risk_score . '/100')
-            ->line('**Statut** : ' . $this->project->status->getLabel())
-            ->line('**Progression** : ' . $this->project->progress . '%')
+            ->subject('⚠️ Projet à risque : '.$this->project->name)
+            ->greeting('Bonjour '.$notifiable->name.',')
+            ->line('Le projet "'.$this->project->name.'" nécessite votre attention.')
+            ->line('**Score de risque** : '.$this->project->risk_score.'/100')
+            ->line('**Statut** : '.$this->project->status->getLabel())
+            ->line('**Progression** : '.$this->project->progress.'%')
             ->when($this->project->end_date, function ($mail) {
-                return $mail->line('**Date de fin prévue** : ' . $this->project->end_date->format('d/m/Y'));
+                return $mail->line('**Date de fin prévue** : '.$this->project->end_date->format('d/m/Y'));
             })
-            ->action('Voir le projet', url('/admin/projects/' . $this->project->id))
+            ->action('Voir le projet', url('/admin/projects/'.$this->project->id))
             ->line('Prenez les mesures nécessaires pour réduire les risques.');
     }
 

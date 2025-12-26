@@ -28,7 +28,7 @@ class CreateProject extends CreateRecord
         $project = $this->getModel()::create($data);
 
         // Attacher les utilisateurs via le service (envoie les notifications)
-        if (!empty($users)) {
+        if (! empty($users)) {
             $projectService = app(ProjectService::class);
             $projectService->attachUsers($project, $users);
         }

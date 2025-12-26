@@ -7,8 +7,8 @@ use App\Enums\TaskStatus;
 use App\Models\User;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
 class TaskForm
@@ -24,7 +24,7 @@ class TaskForm
                     ->validationMessages([
                         'required' => 'Le titre de la tâche est obligatoire.',
                         'max' => 'Le titre ne peut pas dépasser 255 caractères.',
-                    ]),   
+                    ]),
 
                 Textarea::make('description')
                     ->label('Description')
@@ -33,7 +33,7 @@ class TaskForm
                     ->validationMessages([
                         'required' => 'La description est obligatoire.',
                     ]),
-                    
+
                 Select::make('project_id')
                     ->label('Projet')
                     ->relationship('project', 'name')
@@ -45,7 +45,7 @@ class TaskForm
                     ->validationMessages([
                         'required' => 'Le projet est obligatoire.',
                     ]),
-                
+
                 Select::make('users')
                     ->label('Utilisateurs assignés')
                     ->multiple()
@@ -62,7 +62,7 @@ class TaskForm
                     ->validationMessages([
                         'required' => 'La priorité est obligatoire.',
                     ]),
-                
+
                 Select::make('status')
                     ->label('Statut')
                     ->options(TaskStatus::labels())
@@ -76,7 +76,7 @@ class TaskForm
                     ->label('Date de début')
                     ->displayFormat('d/m/Y')
                     ->nullable(),
-                
+
                 DatePicker::make('due_date')
                     ->label('Date d\'échéance')
                     ->displayFormat('d/m/Y')
@@ -87,7 +87,7 @@ class TaskForm
 
     private static function getUsersForProject(?int $projectId): array
     {
-        if (!$projectId) {
+        if (! $projectId) {
             return [];
         }
 
@@ -100,4 +100,3 @@ class TaskForm
             ->toArray();
     }
 }
-

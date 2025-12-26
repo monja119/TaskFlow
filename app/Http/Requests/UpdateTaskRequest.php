@@ -6,7 +6,6 @@ use App\Enums\TaskPriority;
 use App\Enums\TaskStatus;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
-use Illuminate\Validation\Rule;
 
 class UpdateTaskRequest extends FormRequest
 {
@@ -42,6 +41,7 @@ class UpdateTaskRequest extends FormRequest
                 $validator->errors()->add('estimate_minutes', 'Cannot provide both estimated_hours and estimate_minutes');
             }
         });
+
         return $validator;
     }
 

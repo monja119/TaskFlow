@@ -17,7 +17,6 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use UnitEnum;
 
-
 class TaskResource extends Resource
 {
     protected static ?string $model = Task::class;

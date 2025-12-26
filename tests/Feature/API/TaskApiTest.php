@@ -2,18 +2,20 @@
 
 namespace Tests\Feature\API;
 
-use Tests\TestCase;
-use App\Models\User;
 use App\Models\Project;
 use App\Models\Task;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class TaskApiTest extends TestCase
 {
     use RefreshDatabase;
 
     protected User $user;
+
     protected string $token;
+
     protected Project $project;
 
     protected function setUp(): void
@@ -53,7 +55,7 @@ class TaskApiTest extends TestCase
 
         $response->assertStatus(201)
             ->assertJsonStructure([
-                'data' => ['id', 'title', 'description', 'status', 'priority']
+                'data' => ['id', 'title', 'description', 'status', 'priority'],
             ]);
 
         $this->assertDatabaseHas('tasks', [
@@ -69,14 +71,14 @@ class TaskApiTest extends TestCase
         ]);
 
         $response = $this->withToken($this->token)
-            ->getJson('/api/tasks/' . $task->id);
+            ->getJson('/api/tasks/'.$task->id);
 
         $response->assertStatus(200)
             ->assertJson([
                 'data' => [
                     'id' => $task->id,
                     'title' => $task->title,
-                ]
+                ],
             ]);
     }
 
@@ -87,7 +89,7 @@ class TaskApiTest extends TestCase
         ]);
 
         $response = $this->withToken($this->token)
-            ->putJson('/api/tasks/' . $task->id, [
+            ->putJson('/api/tasks/'.$task->id, [
                 'title' => 'Updated Task',
                 'status' => 'in_progress',
                 'priority' => 'high',
@@ -98,7 +100,7 @@ class TaskApiTest extends TestCase
                 'data' => [
                     'title' => 'Updated Task',
                     'status' => 'in_progress',
-                ]
+                ],
             ]);
 
         $this->assertDatabaseHas('tasks', [
@@ -114,7 +116,7 @@ class TaskApiTest extends TestCase
         ]);
 
         $response = $this->withToken($this->token)
-            ->deleteJson('/api/tasks/' . $task->id);
+            ->deleteJson('/api/tasks/'.$task->id);
 
         $response->assertStatus(204);
 
@@ -142,8 +144,8 @@ class TaskApiTest extends TestCase
             ->assertJsonCount(1, 'data')
             ->assertJson([
                 'data' => [
-                    ['status' => 'todo']
-                ]
+                    ['status' => 'todo'],
+                ],
             ]);
     }
 
@@ -165,8 +167,8 @@ class TaskApiTest extends TestCase
             ->assertJsonCount(1, 'data')
             ->assertJson([
                 'data' => [
-                    ['priority' => 'high']
-                ]
+                    ['priority' => 'high'],
+                ],
             ]);
     }
 

@@ -13,11 +13,11 @@ class ProjectAtRiskNotificationService implements NotificationServiceInterface
     /**
      * Send notification to admins and project users about at-risk projects
      *
-     * @param Project $subject
+     * @param  Project  $subject
      */
     public function send(Model $subject, array $context = []): void
     {
-        if (!$subject instanceof Project) {
+        if (! $subject instanceof Project) {
             throw new \InvalidArgumentException('Subject must be an instance of Project');
         }
 

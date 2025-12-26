@@ -2,9 +2,9 @@
 
 namespace Tests\Feature\API;
 
-use Tests\TestCase;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class TokenManagementTest extends TestCase
 {
@@ -24,7 +24,7 @@ class TokenManagementTest extends TestCase
         $response->assertStatus(201)
             ->assertJsonStructure([
                 'token',
-                'token_info' => ['id', 'name', 'abilities']
+                'token_info' => ['id', 'name', 'abilities'],
             ]);
 
         $this->assertCount(2, $user->fresh()->tokens);
@@ -44,8 +44,8 @@ class TokenManagementTest extends TestCase
         $response->assertStatus(200)
             ->assertJsonStructure([
                 'tokens' => [
-                    '*' => ['id', 'name', 'abilities', 'created_at']
-                ]
+                    '*' => ['id', 'name', 'abilities', 'created_at'],
+                ],
             ]);
 
         $this->assertCount(3, $response->json('tokens'));
@@ -58,11 +58,11 @@ class TokenManagementTest extends TestCase
         $currentToken = $user->createToken('Current Token')->plainTextToken;
 
         $response = $this->withToken($currentToken)
-            ->deleteJson('/api/tokens/' . $tokenToRevoke->accessToken->id);
+            ->deleteJson('/api/tokens/'.$tokenToRevoke->accessToken->id);
 
         $response->assertStatus(200)
             ->assertJson([
-                'message' => 'Token revoked successfully'
+                'message' => 'Token revoked successfully',
             ]);
 
         $this->assertCount(1, $user->fresh()->tokens);
@@ -93,7 +93,7 @@ class TokenManagementTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJson([
-                'message' => 'All other tokens revoked successfully'
+                'message' => 'All other tokens revoked successfully',
             ]);
 
         $this->assertCount(1, $user->fresh()->tokens);

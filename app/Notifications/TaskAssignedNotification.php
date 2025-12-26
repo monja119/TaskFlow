@@ -24,16 +24,16 @@ class TaskAssignedNotification extends Notification implements ShouldQueue
     public function toMail($notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Nouvelle tâche assignée : ' . $this->task->title)
-            ->greeting('Bonjour ' . $notifiable->name . ',')
+            ->subject('Nouvelle tâche assignée : '.$this->task->title)
+            ->greeting('Bonjour '.$notifiable->name.',')
             ->line('Une nouvelle tâche vous a été assignée.')
-            ->line('**Titre** : ' . $this->task->title)
-            ->line('**Priorité** : ' . $this->task->priority->getLabel())
-            ->line('**Projet** : ' . $this->task->project->name)
+            ->line('**Titre** : '.$this->task->title)
+            ->line('**Priorité** : '.$this->task->priority->getLabel())
+            ->line('**Projet** : '.$this->task->project->name)
             ->when($this->task->due_date, function ($mail) {
-                return $mail->line('**Échéance** : ' . $this->task->due_date->format('d/m/Y'));
+                return $mail->line('**Échéance** : '.$this->task->due_date->format('d/m/Y'));
             })
-            ->action('Voir la tâche', url('/admin/tasks/' . $this->task->id))
+            ->action('Voir la tâche', url('/admin/tasks/'.$this->task->id))
             ->line('Merci d\'utiliser TaskFlow !');
     }
 

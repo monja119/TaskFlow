@@ -3,7 +3,6 @@
 namespace App\Exceptions;
 
 use Exception;
-use Illuminate\Http\Response;
 
 /**
  * Exception métier personnalisée

@@ -2,11 +2,11 @@
 
 namespace App\Services\Project;
 
+use App\DataTransferObjects\ProjectFilterData;
 use App\Models\Project;
 use App\Models\User;
-use App\DataTransferObjects\ProjectFilterData;
-use App\Services\Notification\ProjectUserAddedNotificationService;
 use App\Services\Notification\ProjectAtRiskNotificationService;
+use App\Services\Notification\ProjectUserAddedNotificationService;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -42,7 +42,7 @@ class ProjectService
     public function update(Project $project, array $validated): Project
     {
         $oldRiskScore = $project->risk_score;
-        
+
         $project->update($validated);
 
         // Check if project became at risk
@@ -76,7 +76,7 @@ class ProjectService
 
         $project->users()->sync($userIds);
 
-        if (!empty($newUserIds)) {
+        if (! empty($newUserIds)) {
             // Send notifications to newly added users
             $newUsers = User::whereIn('id', $newUserIds)->get();
             $this->projectUserAddedNotification->send($project, ['users' => $newUsers->all()]);
@@ -102,4 +102,3 @@ class ProjectService
         return $project->risk_score > 70 && ($oldRiskScore === null || $oldRiskScore <= 70);
     }
 }
-

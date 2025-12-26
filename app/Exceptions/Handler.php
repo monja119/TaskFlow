@@ -3,7 +3,6 @@
 namespace App\Exceptions;
 
 use App\Services\Error\ErrorFormatterService;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Throwable;
 
@@ -26,7 +25,7 @@ class Handler
     public function renderException(Throwable $exception): Response
     {
         $statusCode = $this->getStatusCode($exception);
-        $formatter = new ErrorFormatterService();
+        $formatter = new ErrorFormatterService;
         $error = $formatter->format($statusCode, $exception);
 
         return response()->view('errors.error', compact('error'), $statusCode);
@@ -88,4 +87,3 @@ class Handler
         return 500;
     }
 }
-

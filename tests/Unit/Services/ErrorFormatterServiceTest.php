@@ -13,7 +13,7 @@ class ErrorFormatterServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->formatter = new ErrorFormatterService();
+        $this->formatter = new ErrorFormatterService;
     }
 
     /** @test */

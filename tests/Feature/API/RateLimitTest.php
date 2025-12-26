@@ -2,10 +2,10 @@
 
 namespace Tests\Feature\API;
 
-use Tests\TestCase;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\RateLimiter;
+use Tests\TestCase;
 
 class RateLimitTest extends TestCase
 {
@@ -19,7 +19,7 @@ class RateLimitTest extends TestCase
         ]);
 
         // Clear any existing rate limits
-        RateLimiter::clear('api:' . request()->ip());
+        RateLimiter::clear('api:'.request()->ip());
 
         // Make 11 requests (limit is 10 per minute for login)
         for ($i = 0; $i < 11; $i++) {
@@ -46,7 +46,7 @@ class RateLimitTest extends TestCase
         $token = $user->createToken('test-token')->plainTextToken;
 
         // Clear any existing rate limits
-        RateLimiter::clear('api:' . $user->id);
+        RateLimiter::clear('api:'.$user->id);
 
         // Authenticated endpoints have 120 req/min
         for ($i = 0; $i < 5; $i++) {

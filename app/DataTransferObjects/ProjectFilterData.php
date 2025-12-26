@@ -11,8 +11,7 @@ class ProjectFilterData
         public readonly ?ProjectStatus $status,
         public readonly ?string $search,
         public readonly ?int $perPage,
-    ) {
-    }
+    ) {}
 
     public static function fromRequest(ProjectIndexRequest $request): self
     {

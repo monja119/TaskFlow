@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\API;
 
+use App\DataTransferObjects\TaskFilterData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTaskRequest;
-use App\Http\Requests\UpdateTaskRequest;
 use App\Http\Requests\TaskIndexRequest;
+use App\Http\Requests\UpdateTaskRequest;
 use App\Http\Resources\TaskResource;
-use App\DataTransferObjects\TaskFilterData;
 use App\Models\Task;
 use App\Services\Task\TaskService;
 

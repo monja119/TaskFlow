@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources\Tasks\Schemas;
 
-use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\RepeatableEntry;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 

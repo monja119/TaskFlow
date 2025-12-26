@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Task;
 use App\Enums\TaskStatus;
+use App\Models\Task;
 use App\Services\Notification\TaskDueSoonNotificationService;
 use Illuminate\Console\Command;
 
@@ -36,7 +36,7 @@ class SendTaskDueSoonNotificationsCommand extends Command
     public function handle(): int
     {
         $days = (int) $this->option('days');
-        
+
         $this->info("Looking for tasks due in {$days} days...");
 
         $tasks = Task::query()
@@ -49,6 +49,7 @@ class SendTaskDueSoonNotificationsCommand extends Command
 
         if ($tasks->isEmpty()) {
             $this->info('No tasks due soon found.');
+
             return self::SUCCESS;
         }
 
@@ -56,12 +57,13 @@ class SendTaskDueSoonNotificationsCommand extends Command
         foreach ($tasks as $task) {
             if ($task->users->isEmpty()) {
                 $this->warn("Task #{$task->id} has no assigned users. Skipping...");
+
                 continue;
             }
 
             $this->taskDueSoonNotification->send($task);
             $count++;
-            
+
             $this->line("✓ Sent notification for task: {$task->title} (Due: {$task->due_date->format('Y-m-d')})");
         }
 

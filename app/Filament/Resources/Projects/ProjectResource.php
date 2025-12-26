@@ -20,14 +20,17 @@ use UnitEnum;
 class ProjectResource extends Resource
 {
     protected static ?string $model = Project::class;
-    
+
     protected static bool $shouldRegisterNavigation = true;
-    
+
     protected static ?string $modelLabel = 'projet';
+
     protected static ?string $pluralModelLabel = 'projets';
 
     protected static ?string $navigationLabel = 'Projets';
+
     protected static UnitEnum|string|null $navigationGroup = 'Gestion des projets';
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     protected static ?string $recordTitleAttribute = 'name';

@@ -3,25 +3,23 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Health Check Controller
- * 
+ *
  * Provides health check endpoints for monitoring application status
  * Used by Docker health checks and load balancers
- * 
- * @package App\Http\Controllers
  */
 class HealthCheckController extends Controller
 {
     /**
      * Basic health check endpoint
-     * 
+     *
      * Returns a simple 200 OK response
      * Used by Docker HEALTHCHECK
-     * 
+     *
      * @return \Illuminate\Http\Response
      */
     public function basic()
@@ -32,13 +30,11 @@ class HealthCheckController extends Controller
 
     /**
      * Detailed health check endpoint
-     * 
+     *
      * Checks all critical services:
      * - Database connection
      * - Cache system
      * - Storage accessibility
-     * 
-     * @return \Illuminate\Http\JsonResponse
      */
     public function detailed(): JsonResponse
     {
@@ -49,7 +45,7 @@ class HealthCheckController extends Controller
             'storage' => $this->checkStorage(),
         ];
 
-        $isHealthy = collect($checks)->every(fn($check) => $check['status'] === 'ok');
+        $isHealthy = collect($checks)->every(fn ($check) => $check['status'] === 'ok');
 
         return response()->json([
             'status' => $isHealthy ? 'healthy' : 'unhealthy',
@@ -61,8 +57,6 @@ class HealthCheckController extends Controller
 
     /**
      * Check application status
-     * 
-     * @return array
      */
     private function checkApplication(): array
     {
@@ -84,8 +78,6 @@ class HealthCheckController extends Controller
 
     /**
      * Check database connectivity
-     * 
-     * @return array
      */
     private function checkDatabase(): array
     {
@@ -111,13 +103,11 @@ class HealthCheckController extends Controller
 
     /**
      * Check cache system
-     * 
-     * @return array
      */
     private function checkCache(): array
     {
         try {
-            $key = 'health_check_' . time();
+            $key = 'health_check_'.time();
             $value = 'test';
 
             $startTime = microtime(true);
@@ -147,8 +137,6 @@ class HealthCheckController extends Controller
 
     /**
      * Check storage accessibility
-     * 
-     * @return array
      */
     private function checkStorage(): array
     {
@@ -161,14 +149,14 @@ class HealthCheckController extends Controller
 
             $issues = [];
             foreach ($paths as $name => $path) {
-                if (!is_dir($path)) {
+                if (! is_dir($path)) {
                     $issues[] = "$name directory does not exist: $path";
-                } elseif (!is_writable($path)) {
+                } elseif (! is_writable($path)) {
                     $issues[] = "$name directory is not writable: $path";
                 }
             }
 
-            if (!empty($issues)) {
+            if (! empty($issues)) {
                 return [
                     'status' => 'warning',
                     'message' => 'Storage accessibility issues detected',
@@ -192,23 +180,21 @@ class HealthCheckController extends Controller
 
     /**
      * Readiness check endpoint
-     * 
+     *
      * Checks if the application is ready to receive traffic
      * More comprehensive than basic health check
-     * 
-     * @return \Illuminate\Http\JsonResponse
      */
     public function ready(): JsonResponse
     {
         try {
             // Check if migrations are up to date
             $migrationsCheck = $this->checkMigrations();
-            
+
             // Check critical services
             $dbCheck = $this->checkDatabase();
             $cacheCheck = $this->checkCache();
 
-            $isReady = $migrationsCheck['status'] === 'ok' 
+            $isReady = $migrationsCheck['status'] === 'ok'
                 && $dbCheck['status'] === 'ok'
                 && $cacheCheck['status'] === 'ok';
 
@@ -231,8 +217,6 @@ class HealthCheckController extends Controller
 
     /**
      * Check migration status
-     * 
-     * @return array
      */
     private function checkMigrations(): array
     {
@@ -240,7 +224,7 @@ class HealthCheckController extends Controller
             // Simple check - just verify migrations table exists
             $tableExists = DB::getSchemaBuilder()->hasTable('migrations');
 
-            if (!$tableExists) {
+            if (! $tableExists) {
                 return [
                     'status' => 'error',
                     'message' => 'Migrations table does not exist',
@@ -262,11 +246,9 @@ class HealthCheckController extends Controller
 
     /**
      * Liveness check endpoint
-     * 
+     *
      * Simple check to verify the application process is alive
      * Used by Kubernetes liveness probes
-     * 
-     * @return \Illuminate\Http\JsonResponse
      */
     public function alive(): JsonResponse
     {

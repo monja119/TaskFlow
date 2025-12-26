@@ -1,9 +1,9 @@
 <?php
 
+use App\Exceptions\Handler;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use App\Exceptions\Handler;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -19,8 +19,8 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         // Créer une instance du Handler
-        $handler = new Handler();
-        
+        $handler = new Handler;
+
         // Render uniquement pour les erreurs 500
         $exceptions->render(function (\Throwable $e) use ($handler) {
             $statusCode = $handler->getStatusCode($e);
@@ -28,5 +28,5 @@ return Application::configure(basePath: dirname(__DIR__))
                 return $handler->renderException($e);
             }
         });
-        
+
     })->create();

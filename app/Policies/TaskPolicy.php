@@ -7,7 +7,7 @@ use App\Models\User;
 
 class TaskPolicy
 {
-    public function before(User $user, string $ability): bool|null
+    public function before(User $user, string $ability): ?bool
     {
         return $user->isAdmin() ? true : null;
     }

@@ -1,0 +1,28 @@
+# Environment file (contains secrets)
+.env
+
+# Backup files
+backups/
+*.sql
+*.sql.gz
+
+# SSL certificates
+nginx/ssl/*.key
+nginx/ssl/*.crt
+nginx/ssl/*.pem
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.idea/
+.vscode/
+
+# Temporary files
+*.tmp
+*.temp
+*.bak

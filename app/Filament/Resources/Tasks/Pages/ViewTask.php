@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources\Tasks\Pages;
 
-use App\Filament\Resources\Tasks\TaskResource; 
-use Filament\Actions\EditAction; 
+use App\Filament\Resources\Tasks\TaskResource;
+use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewTask extends ViewRecord

@@ -2,13 +2,24 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Enums\TaskPriority;
+use App\Enums\TaskStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Task extends Model
 {
     /** @use HasFactory<\Database\Factories\TaskFactory> */
     use HasFactory;
+
+    use LogsActivity;
+    use SoftDeletes;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -21,16 +32,57 @@ class Task extends Model
         'description',
         'priority',
         'status',
+        'start_date',
         'due_date',
+        'completed_at',
+        'archived_at',
+        'estimate_minutes',
+        'actual_minutes',
     ];
 
-    public function project()
+    protected $casts = [
+        'priority' => TaskPriority::class,
+        'status' => TaskStatus::class,
+        'start_date' => 'date',
+        'due_date' => 'date',
+        'completed_at' => 'datetime',
+        'archived_at' => 'datetime',
+        'estimate_minutes' => 'integer',
+        'actual_minutes' => 'integer',
+    ];
+
+    public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);
     }
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class);
+    }
+
+    public function scopeOverdue($query)
+    {
+        return $query->whereNull('completed_at')
+            ->whereNotNull('due_date')
+            ->whereDate('due_date', '<', now());
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->whereNull('archived_at');
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['title', 'description', 'status', 'priority', 'start_date', 'due_date', 'actual_minutes', 'project_id'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
     }
 }

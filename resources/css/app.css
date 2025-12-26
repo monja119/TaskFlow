@@ -9,3 +9,135 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+/* Ultra-modern admin skin for Filament */
+@layer base {
+    :root {
+        --brand-50: #e5f6ff;
+        --brand-100: #cceeff;
+        --brand-200: #99dcff;
+        --brand-300: #66c9ff;
+        --brand-400: #33b6ff;
+        --brand-500: #00a2ff;
+        --brand-600: #0080d4;
+        --brand-700: #0a5fa3;
+        --brand-800: #0f4d85;
+        --brand-900: #123e69;
+        --slate-950: #0b1222;
+        --card-glow: 0 20px 60px rgba(0, 0, 0, 0.25);
+        color-scheme: dark;
+        background-color: var(--slate-950);
+    }
+
+    body {
+        min-height: 100vh;
+        background: radial-gradient(circle at 20% 20%, rgba(0, 162, 255, 0.18), transparent 32%),
+            radial-gradient(circle at 80% 0%, rgba(255, 255, 255, 0.08), transparent 30%),
+            radial-gradient(circle at 70% 60%, rgba(0, 128, 212, 0.12), transparent 30%),
+            #0b1222;
+        color: #e5ecf7;
+        font-feature-settings: 'cv02', 'cv03', 'cv04', 'ss01';
+    }
+
+    ::selection {
+        background: rgba(0, 162, 255, 0.18);
+        color: #e5ecf7;
+    }
+}
+
+@layer components {
+    /* Shell */
+    .fi-body {
+        background: transparent;
+    }
+
+    .fi-topbar, .fi-sidebar {
+        background: rgba(16, 23, 42, 0.72);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border: 1px solid rgba(255, 255, 255, 0.04);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+    }
+
+    .fi-sidebar nav a,
+    .fi-topbar nav a {
+        border-radius: 12px;
+        transition: background 180ms ease, color 180ms ease, transform 180ms ease;
+    }
+
+    .fi-sidebar nav a:hover,
+    .fi-topbar nav a:hover {
+        background: linear-gradient(120deg, rgba(0, 162, 255, 0.16), rgba(0, 128, 212, 0.08));
+        color: #e5f7ff;
+        transform: translateX(2px);
+    }
+
+    .fi-main {
+        background: rgba(9, 13, 22, 0.55);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+    }
+
+    .fi-section, .fi-panel, .fi-card, .fi-table, .fi-widget {
+        background: rgba(19, 27, 45, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.04);
+        border-radius: 16px;
+        box-shadow: var(--card-glow);
+    }
+
+    .fi-btn.fi-btn-primary {
+        background: linear-gradient(135deg, var(--brand-500), var(--brand-300));
+        color: #041020;
+        border: none;
+        box-shadow: 0 12px 30px rgba(0, 162, 255, 0.25);
+    }
+
+    .fi-btn.fi-btn-primary:hover {
+        background: linear-gradient(135deg, var(--brand-400), var(--brand-200));
+        transform: translateY(-1px);
+    }
+
+    .fi-btn.fi-btn-secondary,
+    .fi-btn.fi-btn-ghost {
+        border-color: rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.02);
+    }
+
+    .fi-input, .fi-select, .fi-textarea, .fi-rich-editor {
+        background: rgba(9, 13, 22, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        color: #e5ecf7;
+        border-radius: 12px;
+    }
+
+    .fi-input:focus, .fi-select:focus, .fi-textarea:focus {
+        border-color: rgba(0, 162, 255, 0.35);
+        box-shadow: 0 0 0 4px rgba(0, 162, 255, 0.12);
+    }
+
+    .fi-table thead {
+        background: rgba(255, 255, 255, 0.02);
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+        font-size: 0.75rem;
+    }
+
+    .fi-table tbody tr {
+        transition: background 140ms ease, transform 140ms ease;
+    }
+
+    .fi-table tbody tr:hover {
+        background: rgba(0, 162, 255, 0.06);
+        transform: translateY(-1px);
+    }
+
+    .fi-badge { border-radius: 999px; }
+}
+
+@layer utilities {
+    .gradient-title {
+        background: linear-gradient(120deg, var(--brand-300), #6ee7ff, #f8fafc);
+        -webkit-background-clip: text;
+        color: transparent;
+    }
+}

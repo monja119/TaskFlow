@@ -10,6 +10,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use App\Enums\ProjectStatus;
+use App\Services\ProjectStatusFormatter;
 
 class ProjectsTable
 {
@@ -35,6 +36,7 @@ class ProjectsTable
 
                 TextColumn::make('status')
                     ->label('Statut')
+                    ->formatStateUsing(fn ($state) => ProjectStatusFormatter::format($state))
                     ->searchable(),
 
                 TextColumn::make('progress')
@@ -54,10 +56,6 @@ class ProjectsTable
                 TextColumn::make('end_date')
                     ->label('Date de fin')
                     ->date()
-                    ->sortable(),
-
-                TextColumn::make('user.name')
-                    ->label('Utilisateur')
                     ->sortable(),
                     
             ])

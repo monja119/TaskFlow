@@ -18,4 +18,9 @@ enum ProjectStatus: string
             self::BLOCKED->value => 'Bloqué',
         ];
     }
+
+    public function getLabel(): string
+    {
+        return self::labels()[$this->value] ?? $this->value;
+    }
 }

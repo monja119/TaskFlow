@@ -42,39 +42,12 @@ class ProjectForm
                         'required' => 'Le statut est obligatoire.',
                     ]),
 
-                TextInput::make('progress')
-                    ->label('Progression (%)')
-                    ->numeric()
-                    ->minValue(0)
-                    ->maxValue(100)
-                    ->default(0)
-                    ->validationMessages([
-                        'numeric' => 'La progression doit être un nombre.',
-                        'min' => 'La progression doit être au moins 0.',
-                        'max' => 'La progression ne peut pas dépasser 100.',
-                    ]),
-
-                TextInput::make('risk_score')
-                    ->label('Score de risque')
-                    ->numeric()
-                    ->step(0.1)
-                    ->minValue(0)
-                    ->maxValue(100)
-                    ->nullable()
-                    ->validationMessages([
-                        'numeric' => 'Le score de risque doit être un nombre.',
-                        'min' => 'Le score de risque doit être au moins 0.',
-                        'max' => 'Le score de risque ne peut pas dépasser 100.',
-                    ]),
-
-                # user id to "Utilisateur"
-                Select::make('user_id')
-                    ->label('Utilisateur')
-                    ->relationship('user', 'name')
-                    ->required()
-                    ->validationMessages([
-                        'required' => 'L\'utilisateur est obligatoire.',
-                    ]),   
+                # Utilisateurs assignés au projet
+                Select::make('users')
+                    ->label('Utilisateurs assignés')
+                    ->multiple()
+                    ->relationship('users', 'name')
+                    ->helperText('Sélectionnez les utilisateurs à ajouter à ce projet'),   
 
                 # start and end date  format
                 DatePicker::make('start_date')

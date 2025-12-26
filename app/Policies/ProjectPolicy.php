@@ -20,7 +20,13 @@ class ProjectPolicy
 
     public function view(User $user, Project $project): bool
     {
-        return $user->isManager() || $project->user_id === $user->id;
+        // Managers can view all projects; creators can view their own projects.
+        if ($user->isManager() || $project->user_id === $user->id) {
+            return true;
+        }
+
+        // Allow viewing if the user is assigned to the project (many-to-many relation).
+        return $project->users()->whereKey($user->id)->exists();
     }
 
     public function create(User $user): bool
